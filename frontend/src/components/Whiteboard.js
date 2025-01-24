@@ -156,9 +156,9 @@ const Whiteboard = () => {
   };
 
   // Add a tile
-  const addTile = () => {
+  const addTile = (tileInput) => {
     console.log("addTile() triggered");
-    const url = "http://localhost:5000/Images/Tiles/100A.png";
+    const url = "http://localhost:5000/Images/Tiles/" + tileInput + ".png";
     const imgEl = new Image();
     imgEl.src = url;
 
