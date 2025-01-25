@@ -8,7 +8,7 @@ const Whiteboard = () => {
   const socket = useRef(null);
 
   useEffect(() => {
-    // 1. Initialize Fabric Canvas
+    // 1) Create the Fabric canvas
     const canvas = new fabric.Canvas("whiteboard", {
       width: 800,
       height: 800,
@@ -16,17 +16,18 @@ const Whiteboard = () => {
     });
     canvasRef.current = canvas;
 
+    // 2) Draw a big grid
     drawGrid(canvas, 50);
 
-    // Zoom and pan setup (same as you have)...
+    // 3) Zoom + pan listeners
     canvas.on("mouse:wheel", (opt) => {
-      const delta = opt.e.deltaY; // Get scroll direction
-      let zoom = canvas.getZoom(); // Current zoom level
-      zoom *= 0.999 ** delta; // Adjust zoom level (zoom out for positive delta, in for negative)
-      zoom = Math.max(0.1, Math.min(zoom, 3)); // Clamp zoom level between 0.5x and 3x
-      canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom); // Zoom relative to mouse position
-      opt.e.preventDefault(); // Prevent default scrolling
-      opt.e.stopPropagation(); // Stop event bubbling
+      const delta = opt.e.deltaY;
+      let zoom = canvas.getZoom();
+      zoom *= 0.999 ** delta;
+      zoom = Math.max(0.1, Math.min(zoom, 3));
+      canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
     });
 
     let isDragging = false;
@@ -35,7 +36,7 @@ const Whiteboard = () => {
 
     canvas.on("mouse:down", (opt) => {
       const evt = opt.e;
-      if (evt.altKey) { // Use Alt key to differentiate dragging from other actions
+      if (evt.altKey) {
         isDragging = true;
         canvas.selection = false;
         lastPosX = evt.clientX;
@@ -43,58 +44,53 @@ const Whiteboard = () => {
       }
     });
 
-    // Mouse move - handle dragging
     canvas.on("mouse:move", (opt) => {
       if (isDragging) {
         const evt = opt.e;
         const vpt = canvas.viewportTransform;
-
-        vpt[4] += evt.clientX - lastPosX; // Update viewport X translation
-        vpt[5] += evt.clientY - lastPosY; // Update viewport Y translation
-
-        canvas.requestRenderAll(); // Refresh the canvas
+        vpt[4] += evt.clientX - lastPosX;
+        vpt[5] += evt.clientY - lastPosY;
+        canvas.requestRenderAll();
         lastPosX = evt.clientX;
         lastPosY = evt.clientY;
       }
     });
 
-    // Mouse up - stop dragging
     canvas.on("mouse:up", () => {
       isDragging = false;
     });
 
-    // Delete key handler
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Delete" || event.key === "Backspace") {
+    // 4) Delete key => remove object
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
         const activeObject = canvas.getActiveObject();
         if (activeObject) {
           canvas.remove(activeObject);
-          // Correct emit
           socket.current.emit("deleteObject", activeObject.id);
         }
       }
     });
 
-    // 2. Connect to Socket server
+    // 5) Connect to server
     socket.current = io("http://localhost:5000");
 
-    // 3. On new connection, server sends existing objects:
+    // 6) On initCanvas from server => create objects
     socket.current.on("initCanvas", (objects) => {
-      console.log("Initializing canvas with existing objects:", objects);
+      console.log("initCanvas with objects:", objects);
       objects.forEach((objData) => {
         createFabricObject(objData, canvas);
       });
     });
 
-    // 4. Listen for objectAdded (from other clients)
+    // 7) On objectAdded (from other clients)
     socket.current.on("objectAdded", (data) => {
-      console.log("objectAdded event received:", data);
+      console.log("objectAdded from server:", data);
       createFabricObject(data, canvas);
     });
 
-    // 5. Listen for objectDeleted
+    // 8) On objectDeleted
     socket.current.on("objectDeleted", (objectId) => {
-      console.log("objectDeleted event received:", objectId);
+      console.log("objectDeleted from server:", objectId);
       const obj = canvas.getObjects().find((o) => o.id === objectId);
       if (obj) {
         canvas.remove(obj);
@@ -102,18 +98,18 @@ const Whiteboard = () => {
       }
     });
 
-    // 6. Listen for update (others moving/resizing objects)
+    // 9) On update
     socket.current.on("update", ({ id, options }) => {
+      console.log("update from server for:", id);
       const obj = canvas.getObjects().find((o) => o.id === id);
       if (obj) {
         obj.set(options);
         obj.setCoords();
         canvas.renderAll();
-        console.log(`Object updated with ID: ${id}`);
       }
     });
 
-    // 7. On your local object:modified => emit "update"
+    // 10) local object modified => emit "update"
     canvas.on("object:modified", (e) => {
       const obj = e.target;
       if (!obj || !obj.id) return;
@@ -123,42 +119,45 @@ const Whiteboard = () => {
       });
     });
 
-    // Cleanup
+    // Cleanup on unmount
     return () => {
       socket.current.disconnect();
       canvas.dispose();
     };
   }, []);
 
-  // Helper for building Fabric objects from data
+  // Create any object from server data
   const createFabricObject = (data, canvas) => {
     const { id, type, options } = data;
-
     if (type === "circle") {
       const circle = new fabric.Circle(options);
       circle.id = id;
       canvas.add(circle);
+      sortCanvasByZIndex(canvas);
+
       canvas.renderAll();
-    } else if (type === "image" && options.src) {
+    }
+    else if (type === "image" && options.src) {
       const imgEl = new Image();
       imgEl.src = options.src;
       imgEl.onload = () => {
         const fabricImg = new fabric.Image(imgEl, options);
         fabricImg.id = id;
         canvas.add(fabricImg);
+        sortCanvasByZIndex(canvas);
         canvas.renderAll();
       };
       imgEl.onerror = (err) => {
-        console.error("Failed to load tile image:", options.src, err);
+        console.error("Image failed to load:", options.src, err);
       };
     }
-    // handle more object types as needed...
+    // else handle other object types...
   };
 
-  // Add a tile
-  const addTile = (tileInput) => {
-    console.log("addTile() triggered");
-    const url = "http://localhost:5000/Images/Tiles/" + tileInput + ".png";
+  // Add a tile (image)
+  const addTile = (tileName) => {
+    // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
+    const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
     const imgEl = new Image();
     imgEl.src = url;
 
@@ -168,7 +167,7 @@ const Whiteboard = () => {
         top: 100,
         scaleX: 0.2,
         scaleY: 0.2,
-        selectable: true,
+        selectable: true
       });
       fabricImg.id = `tile_${Date.now()}`;
 
@@ -176,16 +175,19 @@ const Whiteboard = () => {
       canvasRef.current.add(fabricImg);
       canvasRef.current.renderAll();
 
-      // Emit "addObject" to server
+      // Emit to server
       socket.current.emit("addObject", {
         id: fabricImg.id,
         type: "image",
-        options: { ...fabricImg.toObject(), src: url },
+        options: {
+          ...fabricImg.toObject(),
+          src: url
+        },
       });
     };
 
     imgEl.onerror = (err) => {
-      console.error("Failed to load local tile image:", err);
+      console.error("Could not load tile image:", url, err);
     };
   };
 
@@ -196,7 +198,7 @@ const Whiteboard = () => {
       top: 150,
       fill: "red",
       radius: 50,
-      selectable: true,
+      selectable: true
     });
     circle.id = `circle_${Date.now()}`;
 
@@ -204,80 +206,62 @@ const Whiteboard = () => {
     canvasRef.current.add(circle);
     canvasRef.current.renderAll();
 
-    // Emit "addObject"
+    // Let the server store it
     socket.current.emit("addObject", {
       id: circle.id,
       type: "circle",
-      options: circle.toObject(),
+      options: circle.toObject()
     });
   };
 
-  // Draw a big grid for reference
-  const drawGrid = (canvas, gridSize = 10) => {
-        const maxGridSize = 200000;
-        const virtualWidth = maxGridSize;
-        const virtualHeight = maxGridSize;
-    
-    
-        // Draw horizontal lines, centered on canvas
-        for (let y = -virtualHeight / 2; y <= virtualHeight / 2; y += gridSize) {
-          const lineY = y;
-          const horizontalLine = new fabric.Line(
-            [-virtualWidth / 2, lineY, virtualWidth / 2, lineY],
-            {
-              stroke: "#ccc",
-              selectable: false,
-              evented: false,
-            }
-          );
-          horizontalLine.gridLine = true; // Mark as grid line
-          canvas.add(horizontalLine);
-        }
-    
-        // Draw vertical lines, centered on canvas
-        for (let x = -virtualWidth / 2; x <= virtualWidth / 2; x += gridSize) {
-          const lineX = x;
-          const verticalLine = new fabric.Line(
-            [lineX, -virtualHeight / 2, lineX, virtualHeight / 2],
-            {
-              stroke: "#ccc",
-              selectable: false,
-              evented: false,
-            }
-          );
-          verticalLine.gridLine = true; // Mark as grid line
-          canvas.add(verticalLine);
-        }
-    
-        // Draw center lines
-        const centerXLine = new fabric.Line(
-          [400, -virtualHeight / 2, 400, virtualHeight / 2],
-          {
-            stroke: "black",
-            strokeWidth: 2,
-            selectable: false,
-            evented: false,
-          }
-        );
-    
-        const centerYLine = new fabric.Line(
-          [-virtualWidth / 2, 400, virtualWidth / 2, 400],
-          {
-            stroke: "black",
-            strokeWidth: 2,
-            selectable: false,
-            evented: false,
-          }
-        );
-    
-        centerXLine.gridLine = true;
-        centerYLine.gridLine = true;
-    
-        canvas.add(centerXLine);
-        canvas.add(centerYLine);
-    
-        canvas.renderAll(); // Ensure all objects are re-rendered
-      };
+  // Draw a big grid
+  const drawGrid = (canvas, gridSize=10) => {
+    const maxGridSize = 200000;
+    const virtualWidth = maxGridSize;
+    const virtualHeight = maxGridSize;
+
+    for (let y = -virtualHeight/2; y <= virtualHeight/2; y += gridSize) {
+      const line = new fabric.Line(
+        [-virtualWidth/2, y, virtualWidth/2, y],
+        { stroke: "#ccc", selectable: false, evented: false }
+      );
+      line.gridLine = true;
+      canvas.add(line);
+    }
+    for (let x = -virtualWidth/2; x <= virtualWidth/2; x += gridSize) {
+      const line = new fabric.Line(
+        [x, -virtualHeight/2, x, virtualHeight/2],
+        { stroke: "#ccc", selectable: false, evented: false }
+      );
+      line.gridLine = true;
+      canvas.add(line);
+    }
+
+    // Add center lines
+    const centerX = new fabric.Line(
+      [400, -virtualHeight/2, 400, virtualHeight/2],
+      { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
+    );
+    const centerY = new fabric.Line(
+      [-virtualWidth/2, 400, virtualWidth/2, 400],
+      { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
+    );
+    canvas.add(centerX, centerY);
+
+    canvas.renderAll();
+  };
+
+  function sortCanvasByZIndex(canvas) {
+    // Sort the objects array by each object's zIndex
+    canvas._objects.sort((a, b) => {
+      const zA = a.zIndex || 0;
+      const zB = b.zIndex || 0;
+      return zA - zB; // lower zIndex => draw first => behind
+    });
+    // Re-render so the new order is visible
+    canvas.renderAll();
+  }
+  
 
   return (
     <div>

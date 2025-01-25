@@ -46,11 +46,24 @@ io.on("connection", (socket) => {
 
   // 2. Handle "addObject"
   socket.on("addObject", (data) => {
-    console.log(`Adding object with ID: ${data.id}`);
-    canvasObjects[data.id] = data;   // store in memory
-    saveCanvasObjects();            // persist to JSON
+    // If it's a circle & missing zIndex, set default=10
+    if (data.type === "circle") {
+      if (data.options.zIndex === undefined) {
+        data.options.zIndex = 10;
+      }
+    }
+    // If it's an image & missing zIndex, set default=0
+    else if (data.type === "image") {
+      if (data.options.zIndex === undefined) {
+        data.options.zIndex = 0;
+      }
+    }
 
-    // Broadcast to other clients so they add it to their canvas
+    // Save in memory & file
+    canvasObjects[data.id] = data;
+    saveCanvasObjects();
+
+    // Broadcast so others add it
     socket.broadcast.emit("objectAdded", data);
   });
 
@@ -67,18 +80,19 @@ io.on("connection", (socket) => {
   });
 
   // 4. Handle "update" (e.g., after object movement, resize, etc.)
-  socket.on("update", (data) => {
-    console.log("Broadcasting update event:", data);
-    const { id, options } = data;
-
-    // Update our stored version
+  socket.on("update", ({ id, options }) => {
     if (canvasObjects[id]) {
-      canvasObjects[id].options = options;
+      const oldOpts = canvasObjects[id].options;
+      // Merge new & old so we don't lose zIndex if omitted
+      canvasObjects[id].options = {
+        ...oldOpts,
+        ...options,
+        zIndex:
+          options.zIndex !== undefined ? options.zIndex : oldOpts.zIndex,
+      };
       saveCanvasObjects();
     }
-
-    // Notify all clients except the sender
-    socket.broadcast.emit("update", data);
+    socket.broadcast.emit("update", { id, options });
   });
 
   socket.on("disconnect", () => {
