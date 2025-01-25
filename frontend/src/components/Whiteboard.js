@@ -85,7 +85,7 @@ const Whiteboard = () => {
     // 7) On objectAdded (from other clients)
     socket.current.on("objectAdded", (data) => {
       console.log("objectAdded from server:", data);
-      createFabricObject(data, canvas);
+      createFabricObject(data, canvasRef.current);
     });
 
     // 8) On objectDeleted
@@ -171,10 +171,6 @@ const Whiteboard = () => {
       });
       fabricImg.id = `tile_${Date.now()}`;
 
-      // Add locally
-      canvasRef.current.add(fabricImg);
-      canvasRef.current.renderAll();
-
       // Emit to server
       socket.current.emit("addObject", {
         id: fabricImg.id,
@@ -193,24 +189,23 @@ const Whiteboard = () => {
 
   // Add a circle
   const addCircle = () => {
-    const circle = new fabric.Circle({
+    const circleId = `circle_${Date.now()}`;
+  
+    // We only create a minimal definition for the server
+    const circleOptions = {
       left: 150,
       top: 150,
-      fill: "red",
       radius: 50,
-      selectable: true
-    });
-    circle.id = `circle_${Date.now()}`;
-
-    // Add locally
-    canvasRef.current.add(circle);
-    canvasRef.current.renderAll();
-
-    // Let the server store it
+      fill: "red",
+      selectable: true,
+    };
+  
+    // 1) We do *not* immediately add it to the local canvas
+    // 2) We simply emit to the server
     socket.current.emit("addObject", {
-      id: circle.id,
+      id: circleId,
       type: "circle",
-      options: circle.toObject()
+      options: circleOptions,
     });
   };
 
@@ -249,6 +244,26 @@ const Whiteboard = () => {
     canvas.add(centerX, centerY);
 
     canvas.renderAll();
+  };
+
+  // We also have optional "bringToFront" or "sendToBack" if needed
+  const bringToFront = (canvas, obj) => {
+    const objects = canvas._objects;
+    const idx = objects.indexOf(obj);
+    if (idx >= 0) {
+      objects.splice(idx, 1);
+      objects.push(obj);
+      canvas.renderAll();
+    }
+  };
+  const sendToBack = (canvas, obj) => {
+    const objects = canvas._objects;
+    const idx = objects.indexOf(obj);
+    if (idx >= 0) {
+      objects.splice(idx, 1);
+      objects.unshift(obj);
+      canvas.renderAll();
+    }
   };
 
   function sortCanvasByZIndex(canvas) {

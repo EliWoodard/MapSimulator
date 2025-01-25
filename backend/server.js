@@ -64,7 +64,8 @@ io.on("connection", (socket) => {
     saveCanvasObjects();
 
     // Broadcast so others add it
-    socket.broadcast.emit("objectAdded", data);
+
+    io.emit("objectAdded", data);
   });
 
   // 3. Handle "deleteObject"
