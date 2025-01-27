@@ -76,9 +76,10 @@ Usage
 
 -   Go to http://localhost:3000 in your browser.
 -   Add objects (tiles, circles, etc.) using the toolbar buttons.
--   Drag or resize objects on the canvas; changes will be synchronized across connected clients in real time.
+-   Drag or resize objects on the canvas; changes will be synchronized across connected clients in real-time.
 -   Press `Delete` or `Backspace` to remove the currently selected object.
 -   All objects are persisted in a JSON file (`canvasObjects.json`) on the server, so if you refresh or reconnect, the same state appears.
+-   Type image names into the text box and press `enter` to create them. These names can be found inside the `Images` folder.
 
 Scripts Reference
 -----------------
