@@ -7,6 +7,134 @@ const Whiteboard = () => {
   const canvasRef = useRef(null);
   const socket = useRef(null);
 
+  // Define map tile values
+  const tileDimensions = {
+    'Images/Tiles/100A.png': { width: 12, height: 8 }, // * 4
+    'Images/Tiles/100B.png': { width: 12, height: 8 },
+    'Images/Tiles/101A.png': { width: 12, height: 8 },
+    'Images/Tiles/101B.png': { width: 12, height: 8 },
+    'Images/Tiles/102A.png': { width: 12, height: 8 },
+    'Images/Tiles/102B.png': { width: 12, height: 8 },
+    'Images/Tiles/103A.png': { width: 12, height: 8 },
+    'Images/Tiles/103B.png': { width: 12, height: 8 },
+    'Images/Tiles/104A.png': { width: 12, height: 8 },
+    'Images/Tiles/104B.png': { width: 12, height: 8 },
+    'Images/Tiles/200A.png': { width: 16, height: 6 },
+    'Images/Tiles/200B.png': { width: 16, height: 16 },
+    'Images/Tiles/201A.png': { width: 12, height: 14 },
+    'Images/Tiles/201B.png': { width: 12, height: 14 },
+    'Images/Tiles/202A.png': { width: 12, height: 16 },
+    'Images/Tiles/202B.png': { width: 12, height: 16 },
+    'Images/Tiles/203A.png': { width: 12, height: 18 },
+    'Images/Tiles/203B.png': { width: 12, height: 18 },
+    'Images/Tiles/204A.png': { width: 8, height: 18 },
+    'Images/Tiles/204B.png': { width: 8, height: 18 },
+    'Images/Tiles/205A.png': { width: 16, height: 14 },
+    'Images/Tiles/205B.png': { width: 16, height: 14 },
+    'Images/Tiles/206A.png': { width: 16, height: 14 },
+    'Images/Tiles/206B.png': { width: 16, height: 14 },
+    'Images/Tiles/207A.png': { width: 16, height: 10 },
+    'Images/Tiles/207B.png': { width: 16, height: 10 },
+    'Images/Tiles/208A.png': { width: 20, height: 12 },
+    'Images/Tiles/208B.png': { width: 20, height: 12 },
+    'Images/Tiles/209A.png': { width: 16, height: 12 },
+    'Images/Tiles/209B.png': { width: 16, height: 12 },
+    'Images/Tiles/210A.png': { width: 20, height: 12 },
+    'Images/Tiles/210B.png': { width: 20, height: 12 },
+    'Images/Tiles/211A.png': { width: 20, height: 14 },
+    'Images/Tiles/211B.png': { width: 20, height: 14 },
+    'Images/Tiles/212A.png': { width: 16, height: 12 },
+    'Images/Tiles/212B.png': { width: 16, height: 12 },
+    'Images/Tiles/213A.png': { width: 12, height: 14 },
+    'Images/Tiles/213B.png': { width: 12, height: 14 },
+    'Images/Tiles/214A.png': { width: 20, height: 14 },
+    'Images/Tiles/214B.png': { width: 20, height: 14 },
+    'Images/Tiles/215A.png': { width: 16, height: 12 },
+    'Images/Tiles/215B.png': { width: 16, height: 12 },
+    'Images/Tiles/216A.png': { width: 16, height: 12 },
+    'Images/Tiles/216B.png': { width: 16, height: 12 },
+    'Images/Tiles/217A.png': { width: 16, height: 12 },
+    'Images/Tiles/217B.png': { width: 16, height: 12 },
+    'Images/Tiles/218A.png': { width: 16, height: 12 },
+    'Images/Tiles/218B.png': { width: 16, height: 12 },
+    'Images/Tiles/219A.png': { width: 16, height: 10 },
+    'Images/Tiles/219B.png': { width: 16, height: 10 },
+    'Images/Tiles/220A.png': { width: 12, height: 16 },
+    'Images/Tiles/220B.png': { width: 12, height: 16 },
+    'Images/Tiles/221A.png': { width: 16, height: 12 },
+    'Images/Tiles/221B.png': { width: 16, height: 12 },
+    'Images/Tiles/222A.png': { width: 20, height: 10 },
+    'Images/Tiles/222B.png': { width: 20, height: 10 },
+    'Images/Tiles/223A.png': { width: 20, height: 12 },
+    'Images/Tiles/223B.png': { width: 20, height: 12 },
+    'Images/Tiles/224A.png': { width: 20, height: 10 },
+    'Images/Tiles/224B.png': { width: 20, height: 10 },
+    'Images/Tiles/225A.png': { width: 20, height: 14 },
+    'Images/Tiles/225B.png': { width: 20, height: 14 },
+    'Images/Tiles/226A.png': { width: 16, height: 14 },
+    'Images/Tiles/226B.png': { width: 16, height: 14 },
+    'Images/Tiles/227A.png': { width: 16, height: 12 },
+    'Images/Tiles/227B.png': { width: 16, height: 12 },
+    'Images/Tiles/300A.png': { width: 20, height: 14 },
+    'Images/Tiles/300B.png': { width: 20, height: 14 },
+    'Images/Tiles/301A.png': { width: 20, height: 16 },
+    'Images/Tiles/301B.png': { width: 20, height: 16 },
+    'Images/Tiles/302A.png': { width: 16, height: 18 },
+    'Images/Tiles/302B.png': { width: 16, height: 18 },
+    'Images/Tiles/303A.png': { width: 20, height: 16 },
+    'Images/Tiles/303B.png': { width: 20, height: 16 },
+    'Images/Tiles/304A.png': { width: 16, height: 20 },
+    'Images/Tiles/304B.png': { width: 16, height: 20 },
+    'Images/Tiles/305A.png': { width: 16, height: 18 },
+    'Images/Tiles/305B.png': { width: 16, height: 18 },
+    'Images/Tiles/306A.png': { width: 16, height: 16 },
+    'Images/Tiles/306B.png': { width: 16, height: 16 },
+    'Images/Tiles/307A.png': { width: 16, height: 18 },
+    'Images/Tiles/307B.png': { width: 16, height: 18 },
+    'Images/Tiles/308A.png': { width: 16, height: 18 },
+    'Images/Tiles/308B.png': { width: 16, height: 18 },
+    'Images/Tiles/309A.png': { width: 20, height: 16 },
+    'Images/Tiles/309B.png': { width: 20, height: 16 },
+    'Images/Tiles/310A.png': { width: 20, height: 14 },
+    'Images/Tiles/310B.png': { width: 20, height: 14 },
+    'Images/Tiles/311A.png': { width: 20, height: 16 },
+    'Images/Tiles/311B.png': { width: 20, height: 16 },
+    'Images/Tiles/312A.png': { width: 20, height: 16 },
+    'Images/Tiles/312B.png': { width: 20, height: 16 },
+    'Images/Tiles/313A.png': { width: 20, height: 12 },
+    'Images/Tiles/313B.png': { width: 20, height: 12 },
+    'Images/Tiles/314A.png': { width: 20, height: 14 },
+    'Images/Tiles/314B.png': { width: 20, height: 14 },
+    'Images/Tiles/315A.png': { width: 28, height: 12 },
+    'Images/Tiles/315B.png': { width: 28, height: 12 },
+    'Images/Tiles/316A.png': { width: 16, height: 18 },
+    'Images/Tiles/316B.png': { width: 16, height: 18 },
+    'Images/Tiles/317A.png': { width: 20, height: 20 },
+    'Images/Tiles/317B.png': { width: 20, height: 20 },
+    'Images/Tiles/318A.png': { width: 20, height: 12 },
+    'Images/Tiles/318B.png': { width: 20, height: 12 },
+    // 'Images/Tiles/.png': { width: 20, height: 14},
+    'Images/Tiles/319B.png': { width: 20, height: 14 },
+    'Images/Tiles/320A.png': { width: 24, height: 20 },
+    'Images/Tiles/320B.png': { width: 24, height: 20 },
+    'Images/Tiles/400A.png': { width: 20, height: 20 },
+    'Images/Tiles/400B.png': { width: 20, height: 20 },
+    'Images/Tiles/401A.png': { width: 20, height: 18 },
+    'Images/Tiles/401B.png': { width: 20, height: 18 },
+    'Images/Tiles/402A.png': { width: 20, height: 20 },
+    'Images/Tiles/402B.png': { width: 20, height: 20 },
+    'Images/Tiles/403A.png': { width: 28, height: 22 },
+    'Images/Tiles/403B.png': { width: 28, height: 22 },
+    'Images/Tiles/404A.png': { width: 24, height: 16 },
+    'Images/Tiles/404B.png': { width: 24, height: 16 },
+    'Images/Tiles/500A.png': { width: 24, height: 22 },
+    'Images/Tiles/500B.png': { width: 24, height: 22 },
+    'Images/Tiles/Battlemap(1).png': { width: 48, height: 48 },
+    'Images/Tiles/Battlemap(2).png': { width: 48, height: 48 },
+    'Images/Tiles/Battlemap(3).png': { width: 48, height: 48 },
+    'Images/Tiles/Battlemap(4).png': { width: 48, height: 48 },
+  };
+
   useEffect(() => {
     // 1) Create the Fabric canvas
     const canvas = new fabric.Canvas("whiteboard", {
@@ -158,19 +286,36 @@ const Whiteboard = () => {
   const addTile = (tileName) => {
     // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
     const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
+    const tilePath = `Images/Tiles/${tileName}.png`;
+    let { newWidth, newHeight } = tileDimensions[tilePath];
+
     const imgEl = new Image();
     imgEl.src = url;
 
     imgEl.onload = () => {
+      const originalWidth = imgEl.naturalWidth;
+      const originalHeight = imgEl.naturalHeight;
+    
+      let { width: tileWidth, height: tileHeight } = tileDimensions[tilePath];
+    
+      // Set the scale factor based on the original image size
+      const scaleX = tileWidth / (originalWidth/30);
+      const scaleY = tileHeight / (originalHeight/30);
+    
       const fabricImg = new fabric.Image(imgEl, {
-        left: 100,
-        top: 100,
-        scaleX: 0.2,
-        scaleY: 0.2,
+        left: 0,
+        top: 0,
+        width: originalWidth,  // Fabric sets this automatically
+        height: originalHeight,
+        scaleX: scaleX, // Scale to match tile dimensions
+        scaleY: scaleY,
         selectable: true
       });
+    
       fabricImg.id = `tile_${Date.now()}`;
-
+    
+      canvasRef.current.renderAll();
+    
       // Emit to server
       socket.current.emit("addObject", {
         id: fabricImg.id,
@@ -181,6 +326,7 @@ const Whiteboard = () => {
         },
       });
     };
+    
 
     imgEl.onerror = (err) => {
       console.error("Could not load tile image:", url, err);
@@ -190,7 +336,7 @@ const Whiteboard = () => {
   // Add a circle
   const addCircle = () => {
     const circleId = `circle_${Date.now()}`;
-  
+
     // We only create a minimal definition for the server
     const circleOptions = {
       left: 150,
@@ -199,7 +345,7 @@ const Whiteboard = () => {
       fill: "red",
       selectable: true,
     };
-  
+
     // 1) We do *not* immediately add it to the local canvas
     // 2) We simply emit to the server
     socket.current.emit("addObject", {
@@ -210,22 +356,22 @@ const Whiteboard = () => {
   };
 
   // Draw a big grid
-  const drawGrid = (canvas, gridSize=10) => {
+  const drawGrid = (canvas, gridSize = 10) => {
     const maxGridSize = 200000;
     const virtualWidth = maxGridSize;
     const virtualHeight = maxGridSize;
 
-    for (let y = -virtualHeight/2; y <= virtualHeight/2; y += gridSize) {
+    for (let y = -virtualHeight / 2; y <= virtualHeight / 2; y += gridSize) {
       const line = new fabric.Line(
-        [-virtualWidth/2, y, virtualWidth/2, y],
+        [-virtualWidth / 2, y, virtualWidth / 2, y],
         { stroke: "#ccc", selectable: false, evented: false }
       );
       line.gridLine = true;
       canvas.add(line);
     }
-    for (let x = -virtualWidth/2; x <= virtualWidth/2; x += gridSize) {
+    for (let x = -virtualWidth / 2; x <= virtualWidth / 2; x += gridSize) {
       const line = new fabric.Line(
-        [x, -virtualHeight/2, x, virtualHeight/2],
+        [x, -virtualHeight / 2, x, virtualHeight / 2],
         { stroke: "#ccc", selectable: false, evented: false }
       );
       line.gridLine = true;
@@ -234,36 +380,16 @@ const Whiteboard = () => {
 
     // Add center lines
     const centerX = new fabric.Line(
-      [400, -virtualHeight/2, 400, virtualHeight/2],
+      [400, -virtualHeight / 2, 400, virtualHeight / 2],
       { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
     );
     const centerY = new fabric.Line(
-      [-virtualWidth/2, 400, virtualWidth/2, 400],
+      [-virtualWidth / 2, 400, virtualWidth / 2, 400],
       { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
     );
     canvas.add(centerX, centerY);
 
     canvas.renderAll();
-  };
-
-  // We also have optional "bringToFront" or "sendToBack" if needed
-  const bringToFront = (canvas, obj) => {
-    const objects = canvas._objects;
-    const idx = objects.indexOf(obj);
-    if (idx >= 0) {
-      objects.splice(idx, 1);
-      objects.push(obj);
-      canvas.renderAll();
-    }
-  };
-  const sendToBack = (canvas, obj) => {
-    const objects = canvas._objects;
-    const idx = objects.indexOf(obj);
-    if (idx >= 0) {
-      objects.splice(idx, 1);
-      objects.unshift(obj);
-      canvas.renderAll();
-    }
   };
 
   function sortCanvasByZIndex(canvas) {
@@ -276,7 +402,7 @@ const Whiteboard = () => {
     // Re-render so the new order is visible
     canvas.renderAll();
   }
-  
+
 
   return (
     <div>
