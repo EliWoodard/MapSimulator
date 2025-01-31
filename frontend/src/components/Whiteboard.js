@@ -19,7 +19,7 @@ const Whiteboard = () => {
     'Images/Tiles/103B.png': { width: 12, height: 8 },
     'Images/Tiles/104A.png': { width: 12, height: 8 },
     'Images/Tiles/104B.png': { width: 12, height: 8 },
-    'Images/Tiles/200A.png': { width: 16, height: 6 },
+    'Images/Tiles/200A.png': { width: 16, height: 16 },
     'Images/Tiles/200B.png': { width: 16, height: 16 },
     'Images/Tiles/201A.png': { width: 12, height: 14 },
     'Images/Tiles/201B.png': { width: 12, height: 14 },
@@ -147,6 +147,39 @@ const Whiteboard = () => {
     // 2) Draw a big grid
     drawGrid(canvas, 50);
 
+    let isRotating = false;
+
+    document.addEventListener("keydown", (e) => {
+      // Skip repeated events if you only want one rotation per press
+      if (e.repeat) return;
+
+      // If arrow keys, prevent default page scroll
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+      }
+
+      const activeObject = canvasRef.current.getActiveObject();
+      if (!activeObject || activeObject.type !== 'image') return;
+
+      let newAngle = activeObject.angle || 0;
+      if (e.key === 'ArrowLeft') {
+        newAngle -= 30;
+      } else if (e.key === 'ArrowRight') {
+        newAngle += 30;
+      } else {
+        return; // not a rotation key
+      }
+
+      activeObject.set('angle', newAngle);
+      activeObject.setCoords();
+      canvasRef.current.renderAll();
+
+      socket.current.emit("update", {
+        id: activeObject.id,
+        options: activeObject.toObject(),
+      });
+    });
+
     // 3) Zoom + pan listeners
     canvas.on("mouse:wheel", (opt) => {
       const delta = opt.e.deltaY;
@@ -273,6 +306,8 @@ const Whiteboard = () => {
 
         // Remove custom rotation and resizing
         fabricImg.set({
+          originX: 'center',
+          originY: 'center',
           lockScalingX: true,
           lockScalingY: true,
           lockRotation: true,
@@ -288,7 +323,7 @@ const Whiteboard = () => {
         console.error("Image failed to load:", options.src, err);
       };
     }
-    // else handle other object types...
+    // else handle future object types...
   };
 
   // Add a tile (image)
@@ -304,13 +339,13 @@ const Whiteboard = () => {
     imgEl.onload = () => {
       const originalWidth = imgEl.naturalWidth;
       const originalHeight = imgEl.naturalHeight;
-    
+
       let { width: tileWidth, height: tileHeight } = tileDimensions[tilePath];
-    
+
       // Set the scale factor based on the original image size
-      const scaleX = tileWidth / (originalWidth/30);
-      const scaleY = tileHeight / (originalHeight/30);
-    
+      const scaleX = tileWidth / (originalWidth / 30);
+      const scaleY = tileHeight / (originalHeight / 30);
+
       const fabricImg = new fabric.Image(imgEl, {
         left: 0,
         top: 0,
@@ -319,12 +354,12 @@ const Whiteboard = () => {
         scaleX: scaleX, // Scale to match tile dimensions
         scaleY: scaleY,
       });
-      
-    
+
+
       fabricImg.id = `tile_${Date.now()}`;
-    
+
       canvasRef.current.renderAll();
-    
+
       // Emit to server
       socket.current.emit("addObject", {
         id: fabricImg.id,
@@ -335,7 +370,7 @@ const Whiteboard = () => {
         },
       });
     };
-    
+
 
     imgEl.onerror = (err) => {
       console.error("Could not load tile image:", url, err);
