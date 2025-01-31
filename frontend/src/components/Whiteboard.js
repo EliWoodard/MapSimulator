@@ -270,6 +270,15 @@ const Whiteboard = () => {
       imgEl.src = options.src;
       imgEl.onload = () => {
         const fabricImg = new fabric.Image(imgEl, options);
+
+        // Remove custom rotation and resizing
+        fabricImg.set({
+          lockScalingX: true,
+          lockScalingY: true,
+          lockRotation: true,
+          hasControls: false,
+        });
+
         fabricImg.id = id;
         canvas.add(fabricImg);
         sortCanvasByZIndex(canvas);
@@ -309,8 +318,8 @@ const Whiteboard = () => {
         height: originalHeight,
         scaleX: scaleX, // Scale to match tile dimensions
         scaleY: scaleY,
-        selectable: true
       });
+      
     
       fabricImg.id = `tile_${Date.now()}`;
     
