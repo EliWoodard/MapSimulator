@@ -140,8 +140,27 @@ const Whiteboard = () => {
     const canvas = new fabric.Canvas("whiteboard", {
       width: 800,
       height: 800,
-      selection: false,
+      selection: false
     });
+    
+    // Create the gradient
+    const gradient = new fabric.Gradient({
+      type: 'linear',
+      coords: { x1: 0, y1: 0, x2: 800, y2: 800 },
+      colorStops: [
+        { offset: 0, color: '#ABABAB' },
+        { offset: 1, color: '#ACACAC' }
+      ]
+    });
+    
+        
+    
+    // Set the gradient background
+    canvas.backgroundColor = gradient;
+    canvas.renderAll();
+    
+
+    
     canvasRef.current = canvas;
 
     // 2) Draw a big grid
@@ -408,7 +427,7 @@ const Whiteboard = () => {
     for (let y = -virtualHeight / 2; y <= virtualHeight / 2; y += gridSize) {
       const line = new fabric.Line(
         [-virtualWidth / 2, y, virtualWidth / 2, y],
-        { stroke: "#ccc", selectable: false, evented: false }
+        { stroke: "#333", selectable: false, evented: false }
       );
       line.gridLine = true;
       canvas.add(line);
@@ -416,7 +435,7 @@ const Whiteboard = () => {
     for (let x = -virtualWidth / 2; x <= virtualWidth / 2; x += gridSize) {
       const line = new fabric.Line(
         [x, -virtualHeight / 2, x, virtualHeight / 2],
-        { stroke: "#ccc", selectable: false, evented: false }
+        { stroke: "#333", selectable: false, evented: false }
       );
       line.gridLine = true;
       canvas.add(line);
