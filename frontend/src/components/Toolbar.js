@@ -88,8 +88,8 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown }) => {
                 <div className="dropdown-option" onClick={() => selectPlayer("Dis")}>
                     Dis
                 </div>
-                <div className="dropdown-option" onClick={() => selectPlayer("Ballin")}>
-                    Ballin
+                <div className="dropdown-option" onClick={() => selectPlayer("Balin")}>
+                    Balin
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ import Whiteboard from "./components/Whiteboard";
 function App() {
     return (
         <div>
-            <h1>Collaborative Whiteboard</h1>
+            <h2>Journeys In Middle Earth</h2>
             <Whiteboard />
         </div>
     );

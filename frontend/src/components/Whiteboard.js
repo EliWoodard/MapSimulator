@@ -129,10 +129,10 @@ const Whiteboard = () => {
     'Images/Tiles/404B.png': { width: 24, height: 16 },
     'Images/Tiles/500A.png': { width: 24, height: 22 },
     'Images/Tiles/500B.png': { width: 24, height: 22 },
-    'Images/Tiles/Battlemap(1).png': { width: 48, height: 48 },
-    'Images/Tiles/Battlemap(2).png': { width: 48, height: 48 },
-    'Images/Tiles/Battlemap(3).png': { width: 48, height: 48 },
-    'Images/Tiles/Battlemap(4).png': { width: 48, height: 48 },
+    'Images/Tiles/Battlemap(1).png': { width: 40, height: 40 },
+    'Images/Tiles/Battlemap(2).png': { width: 40, height: 40 },
+    'Images/Tiles/Battlemap(3).png': { width: 40, height: 40 },
+    'Images/Tiles/Battlemap(4).png': { width: 40, height: 40 },
   };
 
   useEffect(() => {
@@ -140,7 +140,8 @@ const Whiteboard = () => {
     const canvas = new fabric.Canvas("whiteboard", {
       width: 800,
       height: 800,
-      selection: false
+      selection: false,
+      preserveObjectStacking: true
     });
 
     // Create the gradient
@@ -428,6 +429,42 @@ const Whiteboard = () => {
     dropdownButton.textContent = playerName;
     toggleDropdown();
     console.log(`Selected player: ${playerName}`);
+
+    // Emit player to backend
+    const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+
+    const imgEl = new Image();
+    imgEl.src = url;
+
+    imgEl.onload = () => {
+      const originalWidth = imgEl.naturalWidth;
+      const originalHeight = imgEl.naturalHeight;
+
+
+      const fabricImg = new fabric.Image(imgEl, {
+        left: 400,
+        top: 400,
+        width: originalWidth, 
+        height: originalHeight,
+        scaleX: .2,
+        scaleY: .2,
+      });
+
+
+      fabricImg.id = `player_${Date.now()}`;
+
+      canvasRef.current.renderAll();
+
+      // Emit to server
+      socket.current.emit("addObject", {
+        id: fabricImg.id,
+        type: "image",
+        options: {
+          ...fabricImg.toObject(),
+          src: url
+        },
+      });
+    }
   }
 
   // Draw a big grid

@@ -47,13 +47,17 @@ io.on("connection", (socket) => {
   // 2. Handle "addObject"
   socket.on("addObject", (data) => {
     // If it's a circle & missing zIndex, set default=10
-    if (data.type === "circle") {
+    let stringId = data.id;
+
+    let spliceDataType = stringId.split('_');
+
+    if (spliceDataType[0] === "circle" || spliceDataType[0] === "player") {
       if (data.options.zIndex === undefined) {
         data.options.zIndex = 10;
       }
     }
     // If it's an image & missing zIndex, set default=0
-    else if (data.type === "image") {
+    else if (spliceDataType[0] === "image") {
       if (data.options.zIndex === undefined) {
         data.options.zIndex = 0;
       }
