@@ -42,3 +42,29 @@ code {
   align-items: center; 
   gap: 10px; 
 }
+
+.dropdown-menu {
+  top: 50px;
+  background-color: #494949;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  width: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.hidden {
+  display: none;
+}
+
+.dropdown-option {
+  padding: 8px 12px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.dropdown-option:hover {
+  background-color: #292929;
+}

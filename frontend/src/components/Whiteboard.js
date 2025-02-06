@@ -142,7 +142,7 @@ const Whiteboard = () => {
       height: 800,
       selection: false
     });
-    
+
     // Create the gradient
     const gradient = new fabric.Gradient({
       type: 'linear',
@@ -152,15 +152,13 @@ const Whiteboard = () => {
         { offset: 1, color: '#ACACAC' }
       ]
     });
-    
-        
-    
+
     // Set the gradient background
     canvas.backgroundColor = gradient;
     canvas.renderAll();
-    
 
-    
+
+
     canvasRef.current = canvas;
 
     // 2) Draw a big grid
@@ -350,6 +348,8 @@ const Whiteboard = () => {
     // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
     const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
     const tilePath = `Images/Tiles/${tileName}.png`;
+    // Add player
+    // const playerPath = `Images/Tokens/${tileName}.png`
     let { newWidth, newHeight } = tileDimensions[tilePath];
 
     const imgEl = new Image();
@@ -366,8 +366,8 @@ const Whiteboard = () => {
       const scaleY = tileHeight / (originalHeight / 30);
 
       const fabricImg = new fabric.Image(imgEl, {
-        left: 0,
-        top: 0,
+        left: 400,
+        top: 400,
         width: originalWidth,  // Fabric sets this automatically
         height: originalHeight,
         scaleX: scaleX, // Scale to match tile dimensions
@@ -417,6 +417,18 @@ const Whiteboard = () => {
       options: circleOptions,
     });
   };
+
+  function toggleDropdown() {
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    dropdownMenu.classList.toggle("hidden");
+  }
+
+  function selectPlayer(playerName) {
+    const dropdownButton = document.getElementById("dropdownButton");
+    dropdownButton.textContent = playerName;
+    toggleDropdown();
+    console.log(`Selected player: ${playerName}`);
+  }
 
   // Draw a big grid
   const drawGrid = (canvas, gridSize = 10) => {
@@ -469,7 +481,7 @@ const Whiteboard = () => {
 
   return (
     <div>
-      <Toolbar addTile={addTile} addCircle={addCircle} />
+      <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} />
       <canvas id="whiteboard" />
     </div>
   );
