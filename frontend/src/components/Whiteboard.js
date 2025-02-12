@@ -9,7 +9,7 @@ const Whiteboard = () => {
 
   // Define map tile values
   const tileDimensions = {
-    'Images/Tiles/100A.png': { width: 12, height: 8 }, // * 4
+    'Images/Tiles/100A.png': { width: 12, height: 8 },
     'Images/Tiles/100B.png': { width: 12, height: 8 },
     'Images/Tiles/101A.png': { width: 12, height: 8 },
     'Images/Tiles/101B.png': { width: 12, height: 8 },
@@ -131,39 +131,55 @@ const Whiteboard = () => {
     'Images/Tiles/500B.png': { width: 24, height: 22 },
     'Images/Tiles/Battlemap(1).png': { width: 40, height: 40 },
     'Images/Tiles/Battlemap(2).png': { width: 40, height: 40 },
-    'Images/Tiles/Battlemap(3).png': { width: 40, height: 40 },
-    'Images/Tiles/Battlemap(4).png': { width: 40, height: 40 },
   };
 
   useEffect(() => {
-    // 1) Create the Fabric canvas
-    const canvas = new fabric.Canvas("whiteboard", {
-      width: 800,
-      height: 800,
+    const containerEl = document.getElementById("canvasContainer");
+    const whiteboardEl = document.getElementById("whiteboard");
+  
+    // 1) Create the Fabric.js canvas with minimal config
+    const canvas = new fabric.Canvas(whiteboardEl, {
       selection: false,
       preserveObjectStacking: true
     });
+  
+    // 2) Match the drawing surface to the container's size
+    canvas.setWidth(containerEl.clientWidth);
+    canvas.setHeight(containerEl.clientHeight);
+  
+    // (Optional) If you want to re-size automatically on window resize:
+    function handleResize() {
+      canvas.setWidth(containerEl.clientWidth);
+      canvas.setHeight(containerEl.clientHeight);
+      // Re-render
+      canvas.renderAll();
+    }
+    window.addEventListener("resize", handleResize);
 
-    // Create the gradient
+    // 3) Now set background gradient or anything else
     const gradient = new fabric.Gradient({
       type: 'linear',
-      coords: { x1: 0, y1: 0, x2: 800, y2: 800 },
+      coords: { x1: 0, y1: 0, x2: canvas.getWidth(), y2: canvas.getHeight() },
       colorStops: [
         { offset: 0, color: '#ABABAB' },
         { offset: 1, color: '#ACACAC' }
       ]
     });
-
-    // Set the gradient background
     canvas.backgroundColor = gradient;
     canvas.renderAll();
-
 
 
     canvasRef.current = canvas;
 
     // 2) Draw a big grid
     drawGrid(canvas, 50);
+
+    // Repositions the grid to be centered
+    const vpt = canvas.viewportTransform;
+    vpt[4] = canvas.getWidth() / 2;
+    vpt[5] = canvas.getHeight() / 2;
+    canvas.setViewportTransform(vpt);
+    canvas.renderAll();
 
     let isRotating = false;
 
@@ -181,9 +197,9 @@ const Whiteboard = () => {
 
       let newAngle = activeObject.angle || 0;
       if (e.key === 'ArrowLeft') {
-        newAngle -= 30;
+        newAngle -= 15;
       } else if (e.key === 'ArrowRight') {
-        newAngle += 30;
+        newAngle += 15;
       } else {
         return; // not a rotation key
       }
@@ -300,6 +316,7 @@ const Whiteboard = () => {
 
     // Cleanup on unmount
     return () => {
+      window.removeEventListener("resize", handleResize);
       socket.current.disconnect();
       canvas.dispose();
     };
@@ -444,7 +461,7 @@ const Whiteboard = () => {
       const fabricImg = new fabric.Image(imgEl, {
         left: 400,
         top: 400,
-        width: originalWidth, 
+        width: originalWidth,
         height: originalHeight,
         scaleX: .2,
         scaleY: .2,
@@ -492,13 +509,15 @@ const Whiteboard = () => {
 
     // Add center lines
     const centerX = new fabric.Line(
-      [400, -virtualHeight / 2, 400, virtualHeight / 2],
+      [0, -virtualHeight / 2, 0, virtualHeight / 2],
       { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
     );
+    
     const centerY = new fabric.Line(
-      [-virtualWidth / 2, 400, virtualWidth / 2, 400],
+      [-virtualWidth / 2, 0, virtualWidth / 2, 0],
       { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
     );
+    
     canvas.add(centerX, centerY);
 
     canvas.renderAll();
@@ -519,7 +538,9 @@ const Whiteboard = () => {
   return (
     <div>
       <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} />
-      <canvas id="whiteboard" />
+      <div id="canvasContainer">
+        <canvas id="whiteboard" />
+      </div>
     </div>
   );
 };
