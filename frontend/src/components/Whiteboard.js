@@ -157,15 +157,15 @@ const Whiteboard = () => {
     window.addEventListener("resize", handleResize);
 
     // 3) Now set background gradient or anything else
-    const gradient = new fabric.Gradient({
-      type: 'linear',
-      coords: { x1: 0, y1: 0, x2: canvas.getWidth(), y2: canvas.getHeight() },
-      colorStops: [
-        { offset: 0, color: '#ABABAB' },
-        { offset: 1, color: '#ACACAC' }
-      ]
-    });
-    canvas.backgroundColor = gradient;
+    // const gradient = new fabric.Gradient({
+    //   type: 'linear',
+    //   coords: { x1: 0, y1: 0, x2: canvas.getWidth(), y2: canvas.getHeight() },
+    //   colorStops: [
+    //     { offset: 0, color: '#ffffff' },
+    //     { offset: 1, color: '#ACACAC' }
+    //   ]
+    // });
+    canvas.backgroundColor ="rgb(231, 231, 231)";
     canvas.renderAll();
 
 
@@ -219,7 +219,7 @@ const Whiteboard = () => {
       const delta = opt.e.deltaY;
       let zoom = canvas.getZoom();
       zoom *= 0.999 ** delta;
-      zoom = Math.max(0.1, Math.min(zoom, 3));
+      zoom = Math.max(0.2, Math.min(zoom, 3));
       canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
       opt.e.preventDefault();
       opt.e.stopPropagation();
@@ -484,6 +484,54 @@ const Whiteboard = () => {
     }
   }
 
+  function toggleDropdownEnemy() {
+    const dropdownMenuEnemy = document.getElementById("dropdownMenuEnemy");
+    dropdownMenuEnemy.classList.toggle("hidden");
+  }
+
+  function selectEnemy(playerName) {
+    const dropdownButtonEnemy = document.getElementById("dropdownButtonEnemy");
+    dropdownButtonEnemy.textContent = playerName;
+    toggleDropdownEnemy();
+    console.log(`Selected enemy: ${playerName}`);
+
+    // Emit player to backend
+    // const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+
+    // const imgEl = new Image();
+    // imgEl.src = url;
+
+    // imgEl.onload = () => {
+    //   const originalWidth = imgEl.naturalWidth;
+    //   const originalHeight = imgEl.naturalHeight;
+
+
+    //   const fabricImg = new fabric.Image(imgEl, {
+    //     left: 400,
+    //     top: 400,
+    //     width: originalWidth,
+    //     height: originalHeight,
+    //     scaleX: .2,
+    //     scaleY: .2,
+    //   });
+
+
+    //   fabricImg.id = `player_${Date.now()}`;
+
+    //   canvasRef.current.renderAll();
+
+    //   // Emit to server
+    //   socket.current.emit("addObject", {
+    //     id: fabricImg.id,
+    //     type: "image",
+    //     options: {
+    //       ...fabricImg.toObject(),
+    //       src: url
+    //     },
+    //   });
+    // }
+  }
+
   // Draw a big grid
   const drawGrid = (canvas, gridSize = 10) => {
     const maxGridSize = 200000;
@@ -538,7 +586,7 @@ const Whiteboard = () => {
   return (
     <div id="mainBody">
       <div id="toolbar">
-        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} />
+        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} selectEnemy={selectEnemy} toggleDropdownEnemy={toggleDropdownEnemy}/>
       </div>
       <div id="canvasContainer">
         <canvas id="whiteboard" />

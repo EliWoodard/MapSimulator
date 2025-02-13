@@ -16,7 +16,7 @@ code {
   width: 200px;  
   padding: 10px; 
   font-size: 16px; 
-  border: 1px solid #ccc; 
+  border: 1px solid #000000; 
   border-radius: 4px; 
   outline: none; 
   box-sizing: border-box; 
@@ -52,7 +52,45 @@ code {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 10;
+
+  /* Add these lines: */
+  max-height: 80vh;       /* or whatever height you prefer */
+  overflow-y: auto;        /* enable scrolling when content exceeds max-height */
 }
+
+/* Style the scrollbar for WebKit-based browsers (Chrome, Edge, Safari) */
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+}
+
+/* Track (background) */
+.dropdown-menu::-webkit-scrollbar-track {
+  background: #333; /* Dark background for the track */
+  border-radius: 4px;
+}
+
+/* Handle (the draggable scrolling part) */
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar */
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+/* Handle on hover */
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker color when hovered */
+}
+
+/* Optionally hide scrollbar when not in use */
+.dropdown-menu::-webkit-scrollbar-thumb:active {
+  background: #444; /* Even darker when clicked */
+}
+
+/* Style the scrollbar for WebKit-based browsers (Chrome, Edge, Safari) */
+body {
+  overflow: hidden; /* Hide scrollbars */
+}
+
 
 .hidden {
   display: none;

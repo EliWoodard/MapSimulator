@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown }) => {
+const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy, toggleDropdownEnemy }) => {
     const [tileInput, setTileInput] = useState("");
 
     const handleInputChange = (e) => {
@@ -35,6 +35,14 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown }) => {
                 Select Player
             </button>
 
+            <button
+                className="addToken"
+                id="dropdownButtonEnemy"
+                onClick={toggleDropdownEnemy}
+            >
+                Select Enemy
+            </button>
+            
             <div id="dropdownMenu" className="dropdown-menu hidden">
                 {/* Wrap calls in arrow functions */}
                 <div className="dropdown-option" onClick={() => selectPlayer("Gandalf")}>
@@ -90,6 +98,97 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown }) => {
                 </div>
                 <div className="dropdown-option" onClick={() => selectPlayer("Balin")}>
                     Balin
+                </div>
+            </div>
+
+            <div id="dropdownMenuEnemy" className="dropdown-menu hidden">
+                {/* Wrap calls in arrow functions */}
+                <div className="dropdown-option" onClick={() => selectEnemy("Oliphant")}>
+                    Oliphant
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Warg-Rider")}>
+                    Warg-Rider
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Warg")}>
+                    Warg
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Balrog")}>
+                    Balrog
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Fell-Beast")}>
+                    Fell-Beast
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Orc-Hunters")}>
+                    Orc-Hunters
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Goblin-Scout")}>
+                    Goblin-Scout
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Giant-Spider")}>
+                    Giant-Spider
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Orc-Marauders")}>
+                    Orc-Marauders
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Orc-Taskmaster")}>
+                    Orc-Taskmaster
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Pit-Goblines")}>
+                    Pit-Goblines
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Ruffians")}>
+                    Ruffians
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Nameless")}>
+                    Nameless
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Wright")}>
+                    Wright
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Shade")}>
+                    Shade
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Soilder")}>
+                    Soilder
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Siege-Tower")}>
+                    Siege-Tower
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Gulgotar")}>
+                    Gulgotar
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Atarin")}>
+                    Atarin
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Which-King")}>
+                    Which-King
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Coal-Fang")}>
+                    Coal-Fang
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Spawn-of-Ungoliant")}>
+                    Spawn of Ungoliant
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Ursa")}>
+                    Ursa
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Supplicant-of-Morgoth")}>
+                    Supplicant of Morgoth
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Ollie")}>
+                    Ollie
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Hill-Troll")}>
+                    Hill-Troll
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Cave-Troll")}>
+                    Cave-Troll
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Eadris")}>
+                    Eadris
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnemy("Angon")}>
+                    Angon
                 </div>
             </div>
         </div>
