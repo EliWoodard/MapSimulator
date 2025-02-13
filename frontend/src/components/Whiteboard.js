@@ -536,8 +536,10 @@ const Whiteboard = () => {
 
 
   return (
-    <div>
-      <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} />
+    <div id="mainBody">
+      <div id="toolbar">
+        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} />
+      </div>
       <div id="canvasContainer">
         <canvas id="whiteboard" />
       </div>

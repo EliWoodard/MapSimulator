@@ -26,6 +26,7 @@ code {
   padding: 10px 20px; 
   font-size: 16px;
   border: 1px solid #ccc; 
+  border-color: black;
   background-color: #494949;
   color: white; 
   border-radius: 4px; 
@@ -44,13 +45,12 @@ code {
 }
 
 .dropdown-menu {
-  top: 50px;
   background-color: #494949;
   border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 10px;
-  width: 200px;
+  padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
   z-index: 10;
 }
 

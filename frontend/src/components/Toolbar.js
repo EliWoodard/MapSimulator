@@ -15,7 +15,7 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown }) => {
     };
 
     return (
-        <div style={{ paddingBottom: "10px" }}>
+        <div>
             {/* <button onClick={() => addTile(tileInput)}>Add Tile</button> */}
             <input
                 type="text"
