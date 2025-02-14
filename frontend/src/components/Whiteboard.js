@@ -267,7 +267,8 @@ const Whiteboard = () => {
     });
 
     // 5) Connect to server
-    socket.current = io("http://localhost:5000");
+    // socket.current = io("http://localhost:5000");
+    socket.current = io("https://mapsimulator.onrender.com");
 
     // 6) On initCanvas from server => create objects
     socket.current.on("initCanvas", (objects) => {

@@ -25,7 +25,7 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
             />
-            <button class="addToken" onClick={addCircle}>Add Circle</button>
+            {/* <button class="addToken" onClick={addCircle}>Add Circle</button> */}
 
             <button
                 className="addToken"
