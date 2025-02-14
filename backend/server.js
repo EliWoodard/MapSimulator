@@ -13,6 +13,13 @@ app.use(express.json());
 app.use('/Images', express.static(path.join(__dirname, '../Images')));
 console.log("Serving images from:", path.join(__dirname, '../Images'));
 
+// Serve frontend (React build)
+app.use(express.static(path.join(__dirname, "../frontend/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+});
+
 // Load existing canvas objects from JSON file (if present)
 let canvasObjects = {};
 try {
@@ -39,25 +46,19 @@ function saveCanvasObjects() {
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  // 1. Immediately send current canvas objects to the newly connected client
-  //    We'll send them as an array (Object.values(...)) or as the entire object. 
-  //    The client can then iterate and create each Fabric object.
+  // Send current canvas objects to the newly connected client
   socket.emit("initCanvas", Object.values(canvasObjects));
 
-  // 2. Handle "addObject"
+  // Handle "addObject"
   socket.on("addObject", (data) => {
-    // If it's a circle & missing zIndex, set default=10
     let stringId = data.id;
-
     let spliceDataType = stringId.split('_');
 
     if (spliceDataType[0] === "circle" || spliceDataType[0] === "player") {
       if (data.options.zIndex === undefined) {
         data.options.zIndex = 10;
       }
-    }
-    // If it's an image & missing zIndex, set default=0
-    else if (spliceDataType[0] === "image") {
+    } else if (spliceDataType[0] === "image") {
       if (data.options.zIndex === undefined) {
         data.options.zIndex = 0;
       }
@@ -68,11 +69,10 @@ io.on("connection", (socket) => {
     saveCanvasObjects();
 
     // Broadcast so others add it
-
     io.emit("objectAdded", data);
   });
 
-  // 3. Handle "deleteObject"
+  // Handle "deleteObject"
   socket.on("deleteObject", (objectId) => {
     console.log(`Delete request for object ID: ${objectId}`);
 
@@ -84,16 +84,14 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("objectDeleted", objectId);
   });
 
-  // 4. Handle "update" (e.g., after object movement, resize, etc.)
+  // Handle "update"
   socket.on("update", ({ id, options }) => {
     if (canvasObjects[id]) {
       const oldOpts = canvasObjects[id].options;
-      // Merge new & old so we don't lose zIndex if omitted
       canvasObjects[id].options = {
         ...oldOpts,
         ...options,
-        zIndex:
-          options.zIndex !== undefined ? options.zIndex : oldOpts.zIndex,
+        zIndex: options.zIndex !== undefined ? options.zIndex : oldOpts.zIndex,
       };
       saveCanvasObjects();
     }
@@ -105,5 +103,6 @@ io.on("connection", (socket) => {
   });
 });
 
+// Use dynamic port for Render
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

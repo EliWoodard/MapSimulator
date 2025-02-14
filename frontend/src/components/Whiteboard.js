@@ -365,7 +365,8 @@ const Whiteboard = () => {
   // Add a tile (image)
   const addTile = (tileName) => {
     // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
-    const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
+    // const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
+    const url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
     const tilePath = `Images/Tiles/${tileName}.png`;
     // Add player
     // const playerPath = `Images/Tokens/${tileName}.png`
@@ -449,7 +450,8 @@ const Whiteboard = () => {
     console.log(`Selected player: ${playerName}`);
 
     // Emit player to backend
-    const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+    // const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+    const url = `${window.location.origin}/Images/Players/${playerName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
