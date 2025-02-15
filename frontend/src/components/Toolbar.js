@@ -127,29 +127,29 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                 <div className="dropdown-option" onClick={() => selectEnemy("Giant-Spider")}>
                     Giant-Spider
                 </div>
-                <div className="dropdown-option" onClick={() => selectEnemy("Orc-Marauders")}>
-                    Orc-Marauders
+                <div className="dropdown-option" onClick={() => selectEnemy("Orc-Marauder")}>
+                    Orc-Marauder
                 </div>
                 <div className="dropdown-option" onClick={() => selectEnemy("Orc-Taskmaster")}>
                     Orc-Taskmaster
                 </div>
-                <div className="dropdown-option" onClick={() => selectEnemy("Pit-Goblines")}>
-                    Pit-Goblines
+                <div className="dropdown-option" onClick={() => selectEnemy("Pit-Goblin")}>
+                    Pit-Goblin
                 </div>
-                <div className="dropdown-option" onClick={() => selectEnemy("Ruffians")}>
-                    Ruffians
+                <div className="dropdown-option" onClick={() => selectEnemy("Ruffian")}>
+                    Ruffian
                 </div>
                 <div className="dropdown-option" onClick={() => selectEnemy("Nameless")}>
                     Nameless
                 </div>
-                <div className="dropdown-option" onClick={() => selectEnemy("Wright")}>
-                    Wright
+                <div className="dropdown-option" onClick={() => selectEnemy("Wight")}>
+                    Wight
                 </div>
                 <div className="dropdown-option" onClick={() => selectEnemy("Shade")}>
                     Shade
                 </div>
-                <div className="dropdown-option" onClick={() => selectEnemy("Soilder")}>
-                    Soilder
+                <div className="dropdown-option" onClick={() => selectEnemy("Soldier")}>
+                    Soldier
                 </div>
                 <div className="dropdown-option" onClick={() => selectEnemy("Siege-Tower")}>
                     Siege-Tower
@@ -160,8 +160,8 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                 <div className="dropdown-option" onClick={() => selectEnemy("Atarin")}>
                     Atarin
                 </div>
-                <div className="dropdown-option" onClick={() => selectEnemy("Which-King")}>
-                    Which-King
+                <div className="dropdown-option" onClick={() => selectEnemy("Witch-King")}>
+                    Witch-King
                 </div>
                 <div className="dropdown-option" onClick={() => selectEnemy("Coal-Fang")}>
                     Coal-Fang

@@ -492,47 +492,48 @@ const Whiteboard = () => {
     dropdownMenuEnemy.classList.toggle("hidden");
   }
 
-  function selectEnemy(playerName) {
+  function selectEnemy(enemyName) {
     const dropdownButtonEnemy = document.getElementById("dropdownButtonEnemy");
-    dropdownButtonEnemy.textContent = playerName;
+    // dropdownButtonEnemy.textContent = enemyName;
     toggleDropdownEnemy();
-    console.log(`Selected enemy: ${playerName}`);
+    console.log(`Selected enemy: ${enemyName}`);
 
-    // Emit player to backend
-    // const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+    // Emit enemy to backend
+    // const url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
+    const url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
 
-    // const imgEl = new Image();
-    // imgEl.src = url;
+    const imgEl = new Image();
+    imgEl.src = url;
 
-    // imgEl.onload = () => {
-    //   const originalWidth = imgEl.naturalWidth;
-    //   const originalHeight = imgEl.naturalHeight;
-
-
-    //   const fabricImg = new fabric.Image(imgEl, {
-    //     left: 400,
-    //     top: 400,
-    //     width: originalWidth,
-    //     height: originalHeight,
-    //     scaleX: .2,
-    //     scaleY: .2,
-    //   });
+    imgEl.onload = () => {
+      const originalWidth = imgEl.naturalWidth;
+      const originalHeight = imgEl.naturalHeight;
 
 
-    //   fabricImg.id = `player_${Date.now()}`;
+      const fabricImg = new fabric.Image(imgEl, {
+        left: 400,
+        top: 400,
+        width: originalWidth,
+        height: originalHeight,
+        scaleX: .2,
+        scaleY: .2,
+      });
 
-    //   canvasRef.current.renderAll();
 
-    //   // Emit to server
-    //   socket.current.emit("addObject", {
-    //     id: fabricImg.id,
-    //     type: "image",
-    //     options: {
-    //       ...fabricImg.toObject(),
-    //       src: url
-    //     },
-    //   });
-    // }
+      fabricImg.id = `enemy_${Date.now()}`;
+
+      canvasRef.current.renderAll();
+
+      // Emit to server
+      socket.current.emit("addObject", {
+        id: fabricImg.id,
+        type: "image",
+        options: {
+          ...fabricImg.toObject(),
+          src: url
+        },
+      });
+    }
   }
 
   // Draw a big grid
