@@ -445,7 +445,7 @@ const Whiteboard = () => {
 
   function selectPlayer(playerName) {
     const dropdownButton = document.getElementById("dropdownButton");
-    dropdownButton.textContent = playerName;
+    // dropdownButton.textContent = playerName;
     toggleDropdown();
     console.log(`Selected player: ${playerName}`);
 
@@ -509,6 +509,52 @@ const Whiteboard = () => {
       const originalWidth = imgEl.naturalWidth;
       const originalHeight = imgEl.naturalHeight;
 
+      const fabricImg = new fabric.Image(imgEl, {
+        left: 400,
+        top: 400,
+        width: originalWidth,
+        height: originalHeight,
+        scaleX: .2,
+        scaleY: .2,
+      });
+
+      fabricImg.id = `enemy_${Date.now()}`;
+
+      canvasRef.current.renderAll();
+
+      // Emit to server
+      socket.current.emit("addObject", {
+        id: fabricImg.id,
+        type: "image",
+        options: {
+          ...fabricImg.toObject(),
+          src: url
+        },
+      });
+    }
+  }
+
+  function toggleDropdownBanner() {
+    const dropdownMenuBanner = document.getElementById("dropdownMenuBanner");
+    dropdownMenuBanner.classList.toggle("hidden");
+  }
+
+  function selectBanner(bannerName) {
+    const dropdownButtonEnemy = document.getElementById("dropdownButtonEnemy");
+    // dropdownButtonEnemy.textContent = enemyName;
+    toggleDropdownBanner();
+    console.log(`Selected enemy: ${bannerName}`);
+
+    // Emit enemy to backend
+    const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
+    // const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
+
+    const imgEl = new Image();
+    imgEl.src = url;
+
+    imgEl.onload = () => {
+      const originalWidth = imgEl.naturalWidth;
+      const originalHeight = imgEl.naturalHeight;
 
       const fabricImg = new fabric.Image(imgEl, {
         left: 400,
@@ -519,8 +565,7 @@ const Whiteboard = () => {
         scaleY: .2,
       });
 
-
-      fabricImg.id = `enemy_${Date.now()}`;
+      fabricImg.id = `banner_${Date.now()}`;
 
       canvasRef.current.renderAll();
 
@@ -590,7 +635,8 @@ const Whiteboard = () => {
   return (
     <div id="mainBody">
       <div id="toolbar">
-        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} selectEnemy={selectEnemy} toggleDropdownEnemy={toggleDropdownEnemy}/>
+        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} selectEnemy={selectEnemy} 
+        toggleDropdownEnemy={toggleDropdownEnemy} selectBanner={selectBanner} toggleDropdownBanner={toggleDropdownBanner}/>
       </div>
       <div id="canvasContainer">
         <canvas id="whiteboard" />

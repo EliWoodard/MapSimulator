@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
     let stringId = data.id;
     let spliceDataType = stringId.split('_');
 
-    if (spliceDataType[0] === "circle" || spliceDataType[0] === "player" || spliceDataType[0] === "enemy") {
+    if (spliceDataType[0] === "circle" || spliceDataType[0] === "player" || spliceDataType[0] === "enemy" || spliceDataType[0] === "banner") {
       if (data.options.zIndex === undefined) {
         data.options.zIndex = 10;
       }
