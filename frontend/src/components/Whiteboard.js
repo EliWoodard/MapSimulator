@@ -545,9 +545,9 @@ const Whiteboard = () => {
     toggleDropdownBanner();
     console.log(`Selected enemy: ${bannerName}`);
 
-    // Emit enemy to backend
-    const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
-    // const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
+    // Emit banner to backend
+    // const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
+    const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
