@@ -67,6 +67,10 @@ This will:
 -   Start the **frontend** React dev server on port **3000**.
 -   Open your browser at `http://localhost:3000` (if it doesn't open automatically).
 
+### Modify emits
+- Locate lines with ```const url = `${window.location.origin}/Images/Exampletext/${Exampletext}.png`;```
+- Replace with the commented out line: ```const url = `http://localhost:5000/Images/Exampletext/${Exampletext}.png`;```
+
 ### Stopping the App
 
 Press `Ctrl + C` in the terminal to stop both servers.
