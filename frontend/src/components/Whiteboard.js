@@ -162,7 +162,8 @@ const Whiteboard = () => {
 
   useEffect(() => {
     if (!sessionId) return;
-    socket.current = io("http://localhost:5000", {
+    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+    socket.current = io(serverUrl, {
       query: { sessionId, create: isCreating.toString() },
     });
 
