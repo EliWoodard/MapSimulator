@@ -5,6 +5,27 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
+function getSessionFilePath(sessionId) {
+  return path.join(__dirname, `canvasObjects_${sessionId}.json`);
+}
+
+function loadCanvasObjects(sessionId) {
+  const filePath = getSessionFilePath(sessionId);
+  try {
+    const data = fs.readFileSync(filePath, "utf8");
+    console.log(`Loaded canvas objects for session ${sessionId}`);
+    return JSON.parse(data);
+  } catch (error) {
+    console.log(`No file found for session ${sessionId}. Starting new session.`);
+    return {};
+  }
+}
+
+function saveCanvasObjects(sessionId, canvasObjects) {
+  const filePath = getSessionFilePath(sessionId);
+  fs.writeFileSync(filePath, JSON.stringify(canvasObjects, null, 2), "utf8");
+}
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -20,16 +41,6 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 });
 
-// Load existing canvas objects from JSON file (if present)
-let canvasObjects = {};
-try {
-  const data = fs.readFileSync("canvasObjects.json", "utf8");
-  canvasObjects = JSON.parse(data);
-  console.log("Loaded existing canvas objects from file.");
-} catch (error) {
-  console.log("No existing canvasObjects.json found or error reading file.");
-}
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -38,50 +49,49 @@ const io = new Server(server, {
   },
 });
 
-// Helper to save canvasObjects to JSON
-function saveCanvasObjects() {
-  fs.writeFileSync("canvasObjects.json", JSON.stringify(canvasObjects, null, 2), "utf8");
-}
-
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  const sessionId = socket.handshake.query.sessionId || "default";
+  const isCreate = socket.handshake.query.create === "true";
+  const sessionFilePath = getSessionFilePath(sessionId);
 
-  // Send current canvas objects to the newly connected client
+  if (isCreate) {
+    if (fs.existsSync(sessionFilePath)) {
+      socket.emit("sessionError", { message: "Session already exists" });
+      socket.disconnect();
+      return;
+    } else {
+      saveCanvasObjects(sessionId, {}); // Creates a new file for the session.
+      console.log(`Created new session file for session ${sessionId}`);
+    }
+  } else {
+    if (!fs.existsSync(sessionFilePath)) {
+      socket.emit("sessionError", { message: "Session does not exist" });
+      socket.disconnect();
+      return;
+    }
+  }
+
+  // Have the socket join a room based on sessionId.
+  socket.join(sessionId);
+
+  // Load session-specific canvas objects.
+  let canvasObjects = loadCanvasObjects(sessionId);
+
+  // Send current canvas objects to the newly connected client.
   socket.emit("initCanvas", Object.values(canvasObjects));
 
   // Handle "addObject"
   socket.on("addObject", (data) => {
-    let stringId = data.id;
-    let spliceDataType = stringId.split('_');
-
-    if (spliceDataType[0] === "circle" || spliceDataType[0] === "player" || spliceDataType[0] === "enemy" || spliceDataType[0] === "banner") {
-      if (data.options.zIndex === undefined) {
-        data.options.zIndex = 10;
-      }
-    } else if (spliceDataType[0] === "image") {
-      if (data.options.zIndex === undefined) {
-        data.options.zIndex = 0;
-      }
-    }
-
-    // Save in memory & file
     canvasObjects[data.id] = data;
-    saveCanvasObjects();
-
-    // Broadcast so others add it
-    io.emit("objectAdded", data);
+    saveCanvasObjects(sessionId, canvasObjects);
+    io.in(sessionId).emit("objectAdded", data);
   });
 
   // Handle "deleteObject"
   socket.on("deleteObject", (objectId) => {
-    console.log(`Delete request for object ID: ${objectId}`);
-
-    // Remove from memory
     delete canvasObjects[objectId];
-    saveCanvasObjects();
-
-    // Broadcast to other clients
-    socket.broadcast.emit("objectDeleted", objectId);
+    saveCanvasObjects(sessionId, canvasObjects);
+    io.to(sessionId).emit("objectDeleted", objectId);
   });
 
   // Handle "update"
@@ -93,13 +103,13 @@ io.on("connection", (socket) => {
         ...options,
         zIndex: options.zIndex !== undefined ? options.zIndex : oldOpts.zIndex,
       };
-      saveCanvasObjects();
+      saveCanvasObjects(sessionId, canvasObjects);
     }
-    socket.broadcast.emit("update", { id, options });
+    io.to(sessionId).emit("update", { id, options });
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log(`User disconnected from session ${sessionId}:`, socket.id);
   });
 });
 

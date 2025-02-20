@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 import { io } from "socket.io-client";
 import Toolbar from "./Toolbar";
@@ -6,6 +6,8 @@ import Toolbar from "./Toolbar";
 const Whiteboard = () => {
   const canvasRef = useRef(null);
   const socket = useRef(null);
+  const [sessionId, setSessionId] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   // Define map tile values
   const tileDimensions = {
@@ -132,7 +134,46 @@ const Whiteboard = () => {
     'Images/Tiles/Battlemap(2).png': { width: 40, height: 40 },
   };
 
+  function createLobby() {
+    const newSessionId = Math.random().toString(36).substr(2, 8);
+    setSessionId(newSessionId);
+    setIsCreating(true);
+    document.getElementById("mainLobby").style.display = "none";
+  }
+
+  function enterJoinLobby() {
+    document.getElementById("mainLobby").style.display = "none";
+    document.getElementById("joinLobby").style.display = "flex";
+  }
+
+  function joinLobby() {
+    const inputSession = document.getElementById("sessionInput").value;
+    if (inputSession) {
+      setSessionId(inputSession);
+      setIsCreating(false);
+      document.getElementById("joinLobby").style.display = "none";
+    }
+  }
+
+  function goBack() {
+    document.getElementById("joinLobby").style.display = "none";
+    document.getElementById("mainLobby").style.display = "flex";
+  }
+
   useEffect(() => {
+    if (!sessionId) return;
+    socket.current = io("http://localhost:5000", {
+      query: { sessionId, create: isCreating.toString() },
+    });
+
+    // // Listen for session error
+    // socket.current.on("sessionError", (data) => {
+    //   alert(data.message);
+    //   socket.current.disconnect();
+    //   // Optionally reset state to allow retry
+    //   setSessionId(null);
+    // });
+
     const containerEl = document.getElementById("canvasContainer");
     const whiteboardEl = document.getElementById("whiteboard");
 
@@ -265,11 +306,7 @@ const Whiteboard = () => {
       }
     });
 
-    // 5) Connect to server
-    // socket.current = io("http://localhost:5000");
-    socket.current = io("https://mapsimulator.onrender.com");
-
-    // 6) On initCanvas from server => create objects
+    // 5) On initCanvas from server => create objects
     socket.current.on("initCanvas", (objects) => {
       console.log("initCanvas with objects:", objects);
       objects.forEach((objData) => {
@@ -277,13 +314,13 @@ const Whiteboard = () => {
       });
     });
 
-    // 7) On objectAdded (from other clients)
+    // 6) On objectAdded (from other clients)
     socket.current.on("objectAdded", (data) => {
       console.log("objectAdded from server:", data);
       createFabricObject(data, canvasRef.current);
     });
 
-    // 8) On objectDeleted
+    // 7) On objectDeleted
     socket.current.on("objectDeleted", (objectId) => {
       console.log("objectDeleted from server:", objectId);
       const obj = canvas.getObjects().find((o) => o.id === objectId);
@@ -293,7 +330,7 @@ const Whiteboard = () => {
       }
     });
 
-    // 9) On update
+    // 8) On update
     socket.current.on("update", ({ id, options }) => {
       console.log("update from server for:", id);
       const obj = canvas.getObjects().find((o) => o.id === id);
@@ -304,7 +341,7 @@ const Whiteboard = () => {
       }
     });
 
-    // 10) local object modified => emit "update"
+    // 9) local object modified => emit "update"
     canvas.on("object:modified", (e) => {
       const obj = e.target;
       if (!obj || !obj.id) return;
@@ -316,11 +353,11 @@ const Whiteboard = () => {
 
     // Cleanup on unmount
     return () => {
-      window.removeEventListener("resize", handleResize);
-      socket.current.disconnect();
+      window.removeEventListener("resize", () => { });
+      socket.current && socket.current.disconnect();
       canvas.dispose();
     };
-  }, []);
+  }, [sessionId, isCreating]);
 
   // Create any object from server data
   const createFabricObject = (data, canvas) => {
@@ -364,8 +401,8 @@ const Whiteboard = () => {
   // Add a tile (image)
   const addTile = (tileName) => {
     // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
-    // const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
-    const url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
+    const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
+    // const url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
     const tilePath = `Images/Tiles/${tileName}.png`;
     // Add player
     // const playerPath = `Images/Tokens/${tileName}.png`
@@ -449,8 +486,8 @@ const Whiteboard = () => {
     console.log(`Selected player: ${playerName}`);
 
     // Emit player to backend
-    // const url = `http://localhost:5000/Images/Players/${playerName}.png`;
-    const url = `${window.location.origin}/Images/Players/${playerName}.png`;
+    const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+    // const url = `${window.location.origin}/Images/Players/${playerName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -498,8 +535,8 @@ const Whiteboard = () => {
     console.log(`Selected enemy: ${enemyName}`);
 
     // Emit enemy to backend
-    // const url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
-    const url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
+    const url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
+    // const url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -545,8 +582,8 @@ const Whiteboard = () => {
     console.log(`Selected enemy: ${bannerName}`);
 
     // Emit banner to backend
-    // const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
-    const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
+    const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
+    // const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -630,45 +667,44 @@ const Whiteboard = () => {
     canvas.renderAll();
   }
 
-  function createLobby() {
-    document.getElementById("mainLobby").style.display = "none";
-  }
-
-  function enterJoinLobby() {
-    document.getElementById("mainLobby").style.display = "none";
-    document.getElementById("joinLobby").style.display = "flex";
-  }
-
-  function joinLobby() {
-
-  }
-
-  function goBack() {
-    document.getElementById("joinLobby").style.display = "none";
-    document.getElementById("mainLobby").style.display = "flex";
-  }
-
-
   return (
     <div id="mainBody">
       <div id="mainLobby">
-        <button class="lobbyButtons" id="createLobby" onClick={() => createLobby()}>Create Lobby</button>
-        <button class="lobbyButtons" id="enterJoinLobby" onClick={() => enterJoinLobby()}>Join Lobby</button>
+        <button className="lobbyButtons" id="createLobby" onClick={createLobby}>
+          Create Lobby
+        </button>
+        <button className="lobbyButtons" id="enterJoinLobby" onClick={enterJoinLobby}>
+          Join Lobby
+        </button>
       </div>
       <div id="joinLobby">
-      <button class="backButton" onClick={() => goBack()}>&larr;</button>
-        <input class="inputBox" id="createLobby"></input>
-        <button class="lobbyButtons" onClick={() => joinLobby()}>Join Lobby</button>
+        <button className="backButton" onClick={goBack}>&larr;</button>
+        <input className="inputBox" id="sessionInput" placeholder="Enter Session ID" />
+        <button className="lobbyButtons" onClick={joinLobby}>
+          Join Lobby
+        </button>
       </div>
       <div id="toolbar">
-        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} selectEnemy={selectEnemy}
-          toggleDropdownEnemy={toggleDropdownEnemy} selectBanner={selectBanner} toggleDropdownBanner={toggleDropdownBanner} />
+        <Toolbar
+          addTile={addTile}
+          addCircle={addCircle}
+          selectPlayer={selectPlayer}
+          toggleDropdown={toggleDropdown}
+          selectEnemy={selectEnemy}
+          toggleDropdownEnemy={toggleDropdownEnemy}
+          selectBanner={selectBanner}
+          toggleDropdownBanner={toggleDropdownBanner}
+        />
       </div>
       <div id="canvasContainer">
         <canvas id="whiteboard" />
       </div>
+      {sessionId && (
+        <div id="sessionIdDisplay">
+          Session ID: {sessionId}
+        </div>
+      )}
     </div>
   );
 };
-
 export default Whiteboard;
