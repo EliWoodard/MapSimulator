@@ -113,7 +113,6 @@ const Whiteboard = () => {
     'Images/Tiles/317B.png': { width: 20, height: 20 },
     'Images/Tiles/318A.png': { width: 20, height: 12 },
     'Images/Tiles/318B.png': { width: 20, height: 12 },
-    // 'Images/Tiles/.png': { width: 20, height: 14},
     'Images/Tiles/319B.png': { width: 20, height: 14 },
     'Images/Tiles/320A.png': { width: 24, height: 20 },
     'Images/Tiles/320B.png': { width: 24, height: 20 },
@@ -136,17 +135,17 @@ const Whiteboard = () => {
   useEffect(() => {
     const containerEl = document.getElementById("canvasContainer");
     const whiteboardEl = document.getElementById("whiteboard");
-  
+
     // 1) Create the Fabric.js canvas with minimal config
     const canvas = new fabric.Canvas(whiteboardEl, {
       selection: false,
       preserveObjectStacking: true
     });
-  
+
     // 2) Match the drawing surface to the container's size
     canvas.setWidth(containerEl.clientWidth);
     canvas.setHeight(containerEl.clientHeight);
-  
+
     // (Optional) If you want to re-size automatically on window resize:
     function handleResize() {
       canvas.setWidth(containerEl.clientWidth);
@@ -165,7 +164,7 @@ const Whiteboard = () => {
     //     { offset: 1, color: '#ACACAC' }
     //   ]
     // });
-    canvas.backgroundColor ="rgb(231, 231, 231)";
+    canvas.backgroundColor = "rgb(231, 231, 231)";
     canvas.renderAll();
 
 
@@ -609,12 +608,12 @@ const Whiteboard = () => {
       [0, -virtualHeight / 2, 0, virtualHeight / 2],
       { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
     );
-    
+
     const centerY = new fabric.Line(
       [-virtualWidth / 2, 0, virtualWidth / 2, 0],
       { stroke: "black", strokeWidth: 2, selectable: false, evented: false }
     );
-    
+
     canvas.add(centerX, centerY);
 
     canvas.renderAll();
@@ -631,12 +630,39 @@ const Whiteboard = () => {
     canvas.renderAll();
   }
 
+  function createLobby() {
+    document.getElementById("mainLobby").style.display = "none";
+  }
+
+  function enterJoinLobby() {
+    document.getElementById("mainLobby").style.display = "none";
+    document.getElementById("joinLobby").style.display = "flex";
+  }
+
+  function joinLobby() {
+
+  }
+
+  function goBack() {
+    document.getElementById("joinLobby").style.display = "none";
+    document.getElementById("mainLobby").style.display = "flex";
+  }
+
 
   return (
     <div id="mainBody">
+      <div id="mainLobby">
+        <button class="lobbyButtons" id="createLobby" onClick={() => createLobby()}>Create Lobby</button>
+        <button class="lobbyButtons" id="enterJoinLobby" onClick={() => enterJoinLobby()}>Join Lobby</button>
+      </div>
+      <div id="joinLobby">
+      <button class="backButton" onClick={() => goBack()}>&larr;</button>
+        <input class="inputBox" id="createLobby"></input>
+        <button class="lobbyButtons" onClick={() => joinLobby()}>Join Lobby</button>
+      </div>
       <div id="toolbar">
-        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} selectEnemy={selectEnemy} 
-        toggleDropdownEnemy={toggleDropdownEnemy} selectBanner={selectBanner} toggleDropdownBanner={toggleDropdownBanner}/>
+        <Toolbar addTile={addTile} addCircle={addCircle} selectPlayer={selectPlayer} toggleDropdown={toggleDropdown} selectEnemy={selectEnemy}
+          toggleDropdownEnemy={toggleDropdownEnemy} selectBanner={selectBanner} toggleDropdownBanner={toggleDropdownBanner} />
       </div>
       <div id="canvasContainer">
         <canvas id="whiteboard" />

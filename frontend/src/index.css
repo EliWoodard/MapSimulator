@@ -106,3 +106,103 @@ body {
 .dropdown-option:hover {
   background-color: #292929;
 }
+
+/* Lobby Styles */
+#mainLobby {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgb(50, 50, 50), rgb(60, 60, 60)); 
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px; 
+}
+
+.lobbyButtons {
+  background: linear-gradient(145deg, rgb(60, 60, 60), rgb(70, 70, 70));
+  border: none;
+  transition: all 0.3s ease-in-out;
+  color: rgb(200, 200, 200); 
+  font-size: 3vh;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 15px 30px;
+  cursor: pointer;
+  box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.2), 2px 2px 4px rgba(255, 255, 255, 0.05); 
+}
+
+.lobbyButtons:hover {
+  background: linear-gradient(145deg, rgb(75, 75, 75), rgb(95, 95, 95)); 
+  color: rgb(230, 230, 230); 
+  transform: scale(1.05);
+  box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.4), 3px 3px 6px rgba(255, 255, 255, 0.1);
+}
+
+.lobbyButtons:active {
+  transform: scale(0.98);
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Join lobby */
+#joinLobby {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgb(50, 50, 50), rgb(60, 60, 60)); 
+  z-index: 999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px; 
+}
+
+/* Input field styling to blend into the gray theme */
+.inputBox {
+  background: linear-gradient(145deg, rgb(55, 55, 55), rgb(75, 75, 75)); /* Subtle dark gray gradient */
+  border: none;
+  color: rgb(220, 220, 220); /* Soft light gray for readability */
+  font-size: 2.5vh;
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 12px 20px;
+  width: 80%;
+  max-width: 400px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3), 2px 2px 5px rgba(255, 255, 255, 0.05); /* Subtle depth */
+}
+
+/* Focus (active typing) effect */
+.inputBox:focus {
+  background: linear-gradient(145deg, rgb(65, 65, 65), rgb(85, 85, 85)); /* Slightly lighter when typing */
+  color: rgb(255, 255, 255); /* Brighten text slightly */
+  box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.4), 3px 3px 6px rgba(255, 255, 255, 0.1); /* Stronger inner shadow */
+}
+
+/* Placeholder styling */
+.inputBox::placeholder {
+  color: rgb(170, 170, 170); /* Soft gray for subtle hints */
+  font-weight: normal;
+}
+
+/* Back button */
+.backButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  color: rgb(200, 200, 200);
+  font-size: 2.5vh;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.backButton:hover {
+  color: rgb(255, 255, 255);
+  transform: scale(1.1);
+}
