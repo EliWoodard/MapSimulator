@@ -82,6 +82,21 @@ io.on("connection", (socket) => {
 
   // Handle "addObject"
   socket.on("addObject", (data) => {
+    let stringId = data.id;
+    let spliceDataType = stringId.split('_');
+
+    if (spliceDataType[0] === "circle" || spliceDataType[0] === "player" || spliceDataType[0] === "enemy" || spliceDataType[0] === "banner") {
+      if (data.options.zIndex === undefined) {
+        data.options.zIndex = 10;
+      }
+    } else if (spliceDataType[0] === "token") {
+      data.options.zIndex = 9;
+    } else if (spliceDataType[0] === "image") {
+      if (data.options.zIndex === undefined) {
+        data.options.zIndex = 0;
+      }
+    }
+
     canvasObjects[data.id] = data;
     saveCanvasObjects(sessionId, canvasObjects);
     io.in(sessionId).emit("objectAdded", data);

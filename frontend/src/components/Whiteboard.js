@@ -481,8 +481,6 @@ const Whiteboard = () => {
   }
 
   function selectPlayer(playerName) {
-    const dropdownButton = document.getElementById("dropdownButton");
-    // dropdownButton.textContent = playerName;
     toggleDropdown();
     console.log(`Selected player: ${playerName}`);
 
@@ -530,8 +528,6 @@ const Whiteboard = () => {
   }
 
   function selectEnemy(enemyName) {
-    const dropdownButtonEnemy = document.getElementById("dropdownButtonEnemy");
-    // dropdownButtonEnemy.textContent = enemyName;
     toggleDropdownEnemy();
     console.log(`Selected enemy: ${enemyName}`);
 
@@ -577,10 +573,8 @@ const Whiteboard = () => {
   }
 
   function selectBanner(bannerName) {
-    const dropdownButtonEnemy = document.getElementById("dropdownButtonEnemy");
-    // dropdownButtonEnemy.textContent = enemyName;
     toggleDropdownBanner();
-    console.log(`Selected enemy: ${bannerName}`);
+    console.log(`Selected banner: ${bannerName}`);
 
     // Emit banner to backend
     const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
@@ -603,6 +597,51 @@ const Whiteboard = () => {
       });
 
       fabricImg.id = `banner_${Date.now()}`;
+
+      canvasRef.current.renderAll();
+
+      // Emit to server
+      socket.current.emit("addObject", {
+        id: fabricImg.id,
+        type: "image",
+        options: {
+          ...fabricImg.toObject(),
+          src: url
+        },
+      });
+    }
+  }
+
+  function toggleDropdownToken() {
+    const dropdownMenuTokens = document.getElementById("dropdownMenuTokens");
+    dropdownMenuTokens.classList.toggle("hidden");
+  }
+
+  function selectToken(tokenName) {
+    toggleDropdownToken();
+    console.log(`Selected Token: ${tokenName}`);
+
+    // Emit token to backend
+    const url = `http://localhost:5000/Images/Tokens/${tokenName}.png`;
+    // const url = `${window.location.origin}/Images/Tokens/${bannerName}.png`;
+
+    const imgEl = new Image();
+    imgEl.src = url;
+
+    imgEl.onload = () => {
+      const originalWidth = imgEl.naturalWidth;
+      const originalHeight = imgEl.naturalHeight;
+
+      const fabricImg = new fabric.Image(imgEl, {
+        left: 400,
+        top: 400,
+        width: originalWidth,
+        height: originalHeight,
+        scaleX: .2,
+        scaleY: .2,
+      });
+
+      fabricImg.id = `token_${Date.now()}`;
 
       canvasRef.current.renderAll();
 
@@ -695,6 +734,8 @@ const Whiteboard = () => {
           toggleDropdownEnemy={toggleDropdownEnemy}
           selectBanner={selectBanner}
           toggleDropdownBanner={toggleDropdownBanner}
+          selectToken={selectToken}
+          toggleDropdownToken={toggleDropdownToken}
         />
       </div>
       <div id="canvasContainer">

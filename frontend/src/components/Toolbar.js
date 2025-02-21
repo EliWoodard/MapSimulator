@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy, toggleDropdownEnemy, selectBanner, toggleDropdownBanner }) => {
+const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy, toggleDropdownEnemy, selectBanner, toggleDropdownBanner, selectToken, toggleDropdownToken }) => {
     const [tileInput, setTileInput] = useState("");
 
     const handleInputChange = (e) => {
@@ -49,6 +49,14 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                 onClick={toggleDropdownBanner}
             >
                 Select Banner
+            </button>
+
+            <button
+                className="addToken"
+                id="dropdownButtonToken"
+                onClick={toggleDropdownToken}
+            >
+                Select Token
             </button>
             
             <div id="dropdownMenu" className="dropdown-menu hidden">
@@ -206,37 +214,73 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                     Banner(Brown)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Black)")}>
-                Banner(Black)
+                    Banner(Black)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Tan)")}>
-                Banner(Tan)
+                    Banner(Tan)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Yellow)")}>
-                Banner(Yellow)
+                    Banner(Yellow)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Gray)")}>
-                Banner(Gray)
+                    Banner(Gray)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Red)")}>
-                Banner(Red)
+                    Banner(Red)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Cyan)")}>
-                Banner(Cyan)
+                    Banner(Cyan)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Blue)")}>
-                Banner(Blue)
+                    Banner(Blue)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Purple)")}>
-                Banner(Purple)
+                    Banner(Purple)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Lime)")}>
-                Banner(Lime)
+                    Banner(Lime)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Green)")}>
-                Banner(Green)
+                    Banner(Green)
                 </div>
                 <div className="dropdown-option" onClick={() => selectBanner("Banner(Light-Purple)")}>
-                Banner(Light-Purple)
+                    Banner(Light-Purple)
+                </div>
+            </div>
+            <div id="dropdownMenuTokens" className="dropdown-menu hidden">
+                {/* Wrap calls in arrow functions */}
+                <div className="dropdown-option" onClick={() => selectToken("CorruptionToken")}>
+                    Corruption Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("DarknessToken")}>
+                    Darkness Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("DepletionToken")}>
+                    Depletion Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("DifficultTerrainToken")}>
+                    Difficult Terrain Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("DwarfToken")}>
+                    Dwarf Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("ElfToken")}>
+                    Elf Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("HobbitToken")}>
+                    Hobbit Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("RangerToken")}>
+                    Ranger Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("SearchToken")}>
+                    Search Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("ThreatToken")}>
+                    Threat Token
+                </div>
+                <div className="dropdown-option" onClick={() => selectToken("ExplorationToken")}>
+                    Exploration Token
                 </div>
             </div>
         </div>
