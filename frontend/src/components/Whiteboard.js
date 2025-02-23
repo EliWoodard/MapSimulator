@@ -657,6 +657,51 @@ const Whiteboard = () => {
     }
   }
 
+  function toggleDropdownEnvironment() {
+    const dropdownMenuTokens = document.getElementById("dropdownMenuEnvironments");
+    dropdownMenuTokens.classList.toggle("hidden");
+  }
+
+  function selectEnvironment(EnvironmentName) {
+    toggleDropdownEnvironment();
+    console.log(`Selected Environment: ${EnvironmentName}`);
+
+    // Emit Environment to backend
+    const url = `http://localhost:5000/Images/Environments/${EnvironmentName}.png`;
+    // const url = `${window.location.origin}/Images/Environments/${EnvironmentName}.png`;
+
+    const imgEl = new Image();
+    imgEl.src = url;
+
+    imgEl.onload = () => {
+      const originalWidth = imgEl.naturalWidth;
+      const originalHeight = imgEl.naturalHeight;
+
+      const fabricImg = new fabric.Image(imgEl, {
+        left: 400,
+        top: 400,
+        width: originalWidth,
+        height: originalHeight,
+        scaleX: .2,
+        scaleY: .2,
+      });
+
+      fabricImg.id = `environment_${Date.now()}`;
+
+      canvasRef.current.renderAll();
+
+      // Emit to server
+      socket.current.emit("addObject", {
+        id: fabricImg.id,
+        type: "image",
+        options: {
+          ...fabricImg.toObject(),
+          src: url
+        },
+      });
+    }
+  }
+
   // Draw a big grid
   const drawGrid = (canvas, gridSize = 10) => {
     const maxGridSize = 200000;
@@ -736,6 +781,8 @@ const Whiteboard = () => {
           toggleDropdownBanner={toggleDropdownBanner}
           selectToken={selectToken}
           toggleDropdownToken={toggleDropdownToken}
+          selectEnvironment={selectEnvironment}
+          toggleDropdownEnvironment={toggleDropdownEnvironment}
         />
       </div>
       <div id="canvasContainer">

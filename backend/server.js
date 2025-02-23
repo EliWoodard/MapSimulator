@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
       if (data.options.zIndex === undefined) {
         data.options.zIndex = 10;
       }
-    } else if (spliceDataType[0] === "token") {
+    } else if (spliceDataType[0] === "token" || spliceDataType[0] === "environment_") {
       data.options.zIndex = 9;
     } else if (spliceDataType[0] === "image") {
       if (data.options.zIndex === undefined) {

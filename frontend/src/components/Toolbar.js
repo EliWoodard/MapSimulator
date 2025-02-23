@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy, toggleDropdownEnemy, selectBanner, toggleDropdownBanner, selectToken, toggleDropdownToken }) => {
+const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy, toggleDropdownEnemy, selectBanner, toggleDropdownBanner, selectToken, toggleDropdownToken, toggleDropdownEnvironment, selectEnvironment }) => {
     const [tileInput, setTileInput] = useState("");
 
     const handleInputChange = (e) => {
@@ -57,6 +57,14 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                 onClick={toggleDropdownToken}
             >
                 Select Token
+            </button>
+
+            <button
+                className="addToken"
+                id="dropdownButtonEnvironment"
+                onClick={toggleDropdownEnvironment}
+            >
+                Select Environment
             </button>
             
             <div id="dropdownMenu" className="dropdown-menu hidden">
@@ -282,6 +290,12 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
                 <div className="dropdown-option" onClick={() => selectToken("ExplorationToken")}>
                     Exploration Token
                 </div>
+            </div>
+            <div id="dropdownMenuEnvironments" className="dropdown-menu hidden">
+                {/* Wrap calls in arrow functions */}
+                {/* <div className="dropdown-option" onClick={() => selectEnvironment("CorruptionToken")}>
+                    example
+                </div> */}
             </div>
         </div>
     );
