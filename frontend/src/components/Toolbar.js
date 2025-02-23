@@ -293,9 +293,66 @@ const Toolbar = ({ addTile, addCircle, selectPlayer, toggleDropdown, selectEnemy
             </div>
             <div id="dropdownMenuEnvironments" className="dropdown-menu hidden">
                 {/* Wrap calls in arrow functions */}
-                {/* <div className="dropdown-option" onClick={() => selectEnvironment("CorruptionToken")}>
-                    example
-                </div> */}
+                <div className="dropdown-option" onClick={() => selectEnvironment("Barrels")}>
+                    Barrels
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Barricade")}>
+                    Barricade
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Boulder")}>
+                    Boulder
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Bush")}>
+                    Bush
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Chest")}>
+                    Chest
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Elevation")}>
+                    Elevation
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Fence")}>
+                    Fence
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Fire Pit")}>
+                    Fire Pit
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Fountain")}>
+                    Fountain
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Log")}>
+                    Log
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Mist")}>
+                    Mist
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Pit")}>
+                    Pit
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Pond")}>
+                    Pond
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Rubble")}>
+                    Rubble
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Statue")}>
+                    Statue
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Stream")}>
+                    Stream
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Table")}>
+                    Table
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Trench")}>
+                    Trench
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Wall")}>
+                    Wall
+                </div>
+                <div className="dropdown-option" onClick={() => selectEnvironment("Web")}>
+                    Web
+                </div>
             </div>
         </div>
     );
