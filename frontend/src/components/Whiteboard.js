@@ -162,7 +162,7 @@ const Whiteboard = () => {
 
   useEffect(() => {
     if (!sessionId) return;
-    const serverUrl = process.env.REACT_APP_SERVER_URL || "http://localhost:5000";
+    const serverUrl = process.env.REACT_APP_SERVER_URL || window.location.origin;
     socket.current = io(serverUrl, {
       query: { sessionId, create: isCreating.toString() },
     });
@@ -402,8 +402,8 @@ const Whiteboard = () => {
   // Add a tile (image)
   const addTile = (tileName) => {
     // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
-    const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
-    // const url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
+    // const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
+    const url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
     const tilePath = `Images/Tiles/${tileName}.png`;
     // Add player
     // const playerPath = `Images/Tokens/${tileName}.png`
@@ -485,8 +485,8 @@ const Whiteboard = () => {
     console.log(`Selected player: ${playerName}`);
 
     // Emit player to backend
-    const url = `http://localhost:5000/Images/Players/${playerName}.png`;
-    // const url = `${window.location.origin}/Images/Players/${playerName}.png`;
+    // const url = `http://localhost:5000/Images/Players/${playerName}.png`;
+    const url = `${window.location.origin}/Images/Players/${playerName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -532,8 +532,8 @@ const Whiteboard = () => {
     console.log(`Selected enemy: ${enemyName}`);
 
     // Emit enemy to backend
-    const url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
-    // const url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
+    // const url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
+    const url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -577,8 +577,8 @@ const Whiteboard = () => {
     console.log(`Selected banner: ${bannerName}`);
 
     // Emit banner to backend
-    const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
-    // const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
+    // const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
+    const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -622,8 +622,8 @@ const Whiteboard = () => {
     console.log(`Selected Token: ${tokenName}`);
 
     // Emit token to backend
-    const url = `http://localhost:5000/Images/Tokens/${tokenName}.png`;
-    // const url = `${window.location.origin}/Images/Tokens/${bannerName}.png`;
+    // const url = `http://localhost:5000/Images/Tokens/${tokenName}.png`;
+    const url = `${window.location.origin}/Images/Tokens/${tokenName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -667,8 +667,8 @@ const Whiteboard = () => {
     console.log(`Selected Environment: ${EnvironmentName}`);
 
     // Emit Environment to backend
-    const url = `http://localhost:5000/Images/Environments/${EnvironmentName}.png`;
-    // const url = `${window.location.origin}/Images/Environments/${EnvironmentName}.png`;
+    // const url = `http://localhost:5000/Images/Environments/${EnvironmentName}.png`;
+    const url = `${window.location.origin}/Images/Environments/${EnvironmentName}.png`;
 
     const imgEl = new Image();
     imgEl.src = url;
