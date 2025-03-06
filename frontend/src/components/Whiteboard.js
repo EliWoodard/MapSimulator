@@ -3,6 +3,8 @@ import * as fabric from "fabric";
 import { io } from "socket.io-client";
 import Toolbar from "./Toolbar";
 
+const production = true;
+
 const Whiteboard = () => {
   const canvasRef = useRef(null);
   const socket = useRef(null);
@@ -11,127 +13,248 @@ const Whiteboard = () => {
 
   // Define map tile values
   const tileDimensions = {
-    'Images/Tiles/100A.png': { width: 12, height: 8 },
-    'Images/Tiles/100B.png': { width: 12, height: 8 },
-    'Images/Tiles/101A.png': { width: 12, height: 8 },
-    'Images/Tiles/101B.png': { width: 12, height: 8 },
-    'Images/Tiles/102A.png': { width: 12, height: 8 },
-    'Images/Tiles/102B.png': { width: 12, height: 8 },
-    'Images/Tiles/103A.png': { width: 12, height: 8 },
-    'Images/Tiles/103B.png': { width: 12, height: 8 },
-    'Images/Tiles/104A.png': { width: 12, height: 8 },
-    'Images/Tiles/104B.png': { width: 12, height: 8 },
-    'Images/Tiles/200A.png': { width: 16, height: 16 },
-    'Images/Tiles/200B.png': { width: 16, height: 16 },
-    'Images/Tiles/201A.png': { width: 12, height: 14 },
-    'Images/Tiles/201B.png': { width: 12, height: 14 },
-    'Images/Tiles/202A.png': { width: 12, height: 16 },
-    'Images/Tiles/202B.png': { width: 12, height: 16 },
-    'Images/Tiles/203A.png': { width: 12, height: 18 },
-    'Images/Tiles/203B.png': { width: 12, height: 18 },
-    'Images/Tiles/204A.png': { width: 8, height: 18 },
-    'Images/Tiles/204B.png': { width: 8, height: 18 },
-    'Images/Tiles/205A.png': { width: 16, height: 14 },
-    'Images/Tiles/205B.png': { width: 16, height: 14 },
-    'Images/Tiles/206A.png': { width: 16, height: 14 },
-    'Images/Tiles/206B.png': { width: 16, height: 14 },
-    'Images/Tiles/207A.png': { width: 16, height: 10 },
-    'Images/Tiles/207B.png': { width: 16, height: 10 },
-    'Images/Tiles/208A.png': { width: 20, height: 12 },
-    'Images/Tiles/208B.png': { width: 20, height: 12 },
-    'Images/Tiles/209A.png': { width: 16, height: 12 },
-    'Images/Tiles/209B.png': { width: 16, height: 12 },
-    'Images/Tiles/210A.png': { width: 20, height: 12 },
-    'Images/Tiles/210B.png': { width: 20, height: 12 },
-    'Images/Tiles/211A.png': { width: 20, height: 14 },
-    'Images/Tiles/211B.png': { width: 20, height: 14 },
-    'Images/Tiles/212A.png': { width: 16, height: 12 },
-    'Images/Tiles/212B.png': { width: 16, height: 12 },
-    'Images/Tiles/213A.png': { width: 12, height: 14 },
-    'Images/Tiles/213B.png': { width: 12, height: 14 },
-    'Images/Tiles/214A.png': { width: 20, height: 14 },
-    'Images/Tiles/214B.png': { width: 20, height: 14 },
-    'Images/Tiles/215A.png': { width: 16, height: 12 },
-    'Images/Tiles/215B.png': { width: 16, height: 12 },
-    'Images/Tiles/216A.png': { width: 16, height: 12 },
-    'Images/Tiles/216B.png': { width: 16, height: 12 },
-    'Images/Tiles/217A.png': { width: 16, height: 12 },
-    'Images/Tiles/217B.png': { width: 16, height: 12 },
-    'Images/Tiles/218A.png': { width: 16, height: 12 },
-    'Images/Tiles/218B.png': { width: 16, height: 12 },
-    'Images/Tiles/219A.png': { width: 16, height: 10 },
-    'Images/Tiles/219B.png': { width: 16, height: 10 },
-    'Images/Tiles/220A.png': { width: 12, height: 16 },
-    'Images/Tiles/220B.png': { width: 12, height: 16 },
-    'Images/Tiles/221A.png': { width: 16, height: 12 },
-    'Images/Tiles/221B.png': { width: 16, height: 12 },
-    'Images/Tiles/222A.png': { width: 20, height: 10 },
-    'Images/Tiles/222B.png': { width: 20, height: 10 },
-    'Images/Tiles/223A.png': { width: 20, height: 12 },
-    'Images/Tiles/223B.png': { width: 20, height: 12 },
-    'Images/Tiles/224A.png': { width: 20, height: 10 },
-    'Images/Tiles/224B.png': { width: 20, height: 10 },
-    'Images/Tiles/225A.png': { width: 20, height: 14 },
-    'Images/Tiles/225B.png': { width: 20, height: 14 },
-    'Images/Tiles/226A.png': { width: 16, height: 14 },
-    'Images/Tiles/226B.png': { width: 16, height: 14 },
-    'Images/Tiles/227A.png': { width: 16, height: 12 },
-    'Images/Tiles/227B.png': { width: 16, height: 12 },
-    'Images/Tiles/300A.png': { width: 20, height: 14 },
-    'Images/Tiles/300B.png': { width: 20, height: 14 },
-    'Images/Tiles/301A.png': { width: 20, height: 16 },
-    'Images/Tiles/301B.png': { width: 20, height: 16 },
-    'Images/Tiles/302A.png': { width: 16, height: 18 },
-    'Images/Tiles/302B.png': { width: 16, height: 18 },
-    'Images/Tiles/303A.png': { width: 20, height: 16 },
-    'Images/Tiles/303B.png': { width: 20, height: 16 },
-    'Images/Tiles/304A.png': { width: 16, height: 20 },
-    'Images/Tiles/304B.png': { width: 16, height: 20 },
-    'Images/Tiles/305A.png': { width: 16, height: 18 },
-    'Images/Tiles/305B.png': { width: 16, height: 18 },
-    'Images/Tiles/306A.png': { width: 16, height: 16 },
-    'Images/Tiles/306B.png': { width: 16, height: 16 },
-    'Images/Tiles/307A.png': { width: 16, height: 18 },
-    'Images/Tiles/307B.png': { width: 16, height: 18 },
-    'Images/Tiles/308A.png': { width: 16, height: 18 },
-    'Images/Tiles/308B.png': { width: 16, height: 18 },
-    'Images/Tiles/309A.png': { width: 20, height: 16 },
-    'Images/Tiles/309B.png': { width: 20, height: 16 },
-    'Images/Tiles/310A.png': { width: 20, height: 14 },
-    'Images/Tiles/310B.png': { width: 20, height: 14 },
-    'Images/Tiles/311A.png': { width: 20, height: 16 },
-    'Images/Tiles/311B.png': { width: 20, height: 16 },
-    'Images/Tiles/312A.png': { width: 20, height: 16 },
-    'Images/Tiles/312B.png': { width: 20, height: 16 },
-    'Images/Tiles/313A.png': { width: 20, height: 12 },
-    'Images/Tiles/313B.png': { width: 20, height: 12 },
-    'Images/Tiles/314A.png': { width: 20, height: 14 },
-    'Images/Tiles/314B.png': { width: 20, height: 14 },
-    'Images/Tiles/315A.png': { width: 28, height: 12 },
-    'Images/Tiles/315B.png': { width: 28, height: 12 },
-    'Images/Tiles/316A.png': { width: 16, height: 18 },
-    'Images/Tiles/316B.png': { width: 16, height: 18 },
-    'Images/Tiles/317A.png': { width: 20, height: 20 },
-    'Images/Tiles/317B.png': { width: 20, height: 20 },
-    'Images/Tiles/318A.png': { width: 20, height: 12 },
-    'Images/Tiles/318B.png': { width: 20, height: 12 },
-    'Images/Tiles/319B.png': { width: 20, height: 14 },
-    'Images/Tiles/320A.png': { width: 24, height: 20 },
-    'Images/Tiles/320B.png': { width: 24, height: 20 },
-    'Images/Tiles/400A.png': { width: 20, height: 20 },
-    'Images/Tiles/400B.png': { width: 20, height: 20 },
-    'Images/Tiles/401A.png': { width: 20, height: 18 },
-    'Images/Tiles/401B.png': { width: 20, height: 18 },
-    'Images/Tiles/402A.png': { width: 20, height: 20 },
-    'Images/Tiles/402B.png': { width: 20, height: 20 },
-    'Images/Tiles/403A.png': { width: 28, height: 22 },
-    'Images/Tiles/403B.png': { width: 28, height: 22 },
-    'Images/Tiles/404A.png': { width: 24, height: 16 },
-    'Images/Tiles/404B.png': { width: 24, height: 16 },
-    'Images/Tiles/500A.png': { width: 24, height: 22 },
-    'Images/Tiles/500B.png': { width: 24, height: 22 },
+    'Images/Tiles/100A.png': { width: 15, height: 10 },
+    'Images/Tiles/100B.png': { width: 15, height: 10 },
+    'Images/Tiles/101A.png': { width: 15, height: 10 },
+    'Images/Tiles/101B.png': { width: 15, height: 10 },
+    'Images/Tiles/102A.png': { width: 15, height: 10 },
+    'Images/Tiles/102B.png': { width: 15, height: 10 },
+    'Images/Tiles/103A.png': { width: 15, height: 10 },
+    'Images/Tiles/103B.png': { width: 15, height: 10 },
+    'Images/Tiles/104A.png': { width: 15, height: 10 },
+    'Images/Tiles/104B.png': { width: 15, height: 10 },
+    'Images/Tiles/200A.png': { width: 20, height: 20 },
+    'Images/Tiles/200B.png': { width: 20, height: 20 },
+    'Images/Tiles/201A.png': { width: 15, height: 17.5 },
+    'Images/Tiles/201B.png': { width: 15, height: 17.5 },
+    'Images/Tiles/202A.png': { width: 15, height: 20 },
+    'Images/Tiles/202B.png': { width: 15, height: 20 },
+    'Images/Tiles/203A.png': { width: 15, height: 22.5 },
+    'Images/Tiles/203B.png': { width: 15, height: 22.5 },
+    'Images/Tiles/204A.png': { width: 10, height: 22.5 },
+    'Images/Tiles/204B.png': { width: 10, height: 22.5 },
+    'Images/Tiles/205A.png': { width: 20, height: 17.5 },
+    'Images/Tiles/205B.png': { width: 20, height: 17.5 },
+    'Images/Tiles/206A.png': { width: 20, height: 17.5 },
+    'Images/Tiles/206B.png': { width: 20, height: 17.5 },
+    'Images/Tiles/207A.png': { width: 20, height: 12.5 },
+    'Images/Tiles/207B.png': { width: 20, height: 12.5 },
+    'Images/Tiles/208A.png': { width: 25, height: 15 },
+    'Images/Tiles/208B.png': { width: 25, height: 15 },
+    'Images/Tiles/209A.png': { width: 20, height: 15 },
+    'Images/Tiles/209B.png': { width: 20, height: 15 },
+    'Images/Tiles/210A.png': { width: 25, height: 15 },
+    'Images/Tiles/210B.png': { width: 25, height: 15 },
+    'Images/Tiles/211A.png': { width: 25, height: 17.5 },
+    'Images/Tiles/211B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/212A.png': { width: 20, height: 15 },
+    'Images/Tiles/212B.png': { width: 20, height: 15 },
+    'Images/Tiles/213A.png': { width: 15, height: 17.5 },
+    'Images/Tiles/213B.png': { width: 15, height: 17.5 },
+    'Images/Tiles/214A.png': { width: 25, height: 17.5 },
+    'Images/Tiles/214B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/215A.png': { width: 20, height: 15 },
+    'Images/Tiles/215B.png': { width: 20, height: 15 },
+    'Images/Tiles/216A.png': { width: 20, height: 15 },
+    'Images/Tiles/216B.png': { width: 20, height: 15 },
+    'Images/Tiles/217A.png': { width: 20, height: 15 },
+    'Images/Tiles/217B.png': { width: 20, height: 15 },
+    'Images/Tiles/218A.png': { width: 20, height: 15 },
+    'Images/Tiles/218B.png': { width: 20, height: 15 },
+    'Images/Tiles/219A.png': { width: 20, height: 12.5 },
+    'Images/Tiles/219B.png': { width: 20, height: 12.5 },
+    'Images/Tiles/220A.png': { width: 15, height: 20 },
+    'Images/Tiles/220B.png': { width: 15, height: 20 },
+    'Images/Tiles/221A.png': { width: 20, height: 15 },
+    'Images/Tiles/221B.png': { width: 20, height: 15 },
+    'Images/Tiles/222A.png': { width: 25, height: 12.5 },
+    'Images/Tiles/222B.png': { width: 25, height: 12.5 },
+    'Images/Tiles/223A.png': { width: 25, height: 15 },
+    'Images/Tiles/223B.png': { width: 25, height: 15 },
+    'Images/Tiles/224A.png': { width: 25, height: 12.5 },
+    'Images/Tiles/224B.png': { width: 25, height: 12.5 },
+    'Images/Tiles/225A.png': { width: 25, height: 17.5 },
+    'Images/Tiles/225B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/226A.png': { width: 20, height: 17.5 },
+    'Images/Tiles/226B.png': { width: 20, height: 17.5 },
+    'Images/Tiles/227A.png': { width: 20, height: 17.5 },
+    'Images/Tiles/227B.png': { width: 20, height: 15 },
+    'Images/Tiles/300A.png': { width: 25, height: 17.5 },
+    'Images/Tiles/300B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/301A.png': { width: 25, height: 20 },
+    'Images/Tiles/301B.png': { width: 25, height: 20 },
+    'Images/Tiles/302A.png': { width: 20, height: 22.5 },
+    'Images/Tiles/302B.png': { width: 20, height: 22.5 },
+    'Images/Tiles/303A.png': { width: 25, height: 20 },
+    'Images/Tiles/303B.png': { width: 25, height: 20 },
+    'Images/Tiles/304A.png': { width: 20, height: 25 },
+    'Images/Tiles/304B.png': { width: 20, height: 25 },
+    'Images/Tiles/305A.png': { width: 20, height: 22.5 },
+    'Images/Tiles/305B.png': { width: 20, height: 22.5 },
+    'Images/Tiles/306A.png': { width: 20, height: 20 },
+    'Images/Tiles/306B.png': { width: 20, height: 20 },
+    'Images/Tiles/307A.png': { width: 20, height: 22.5 },
+    'Images/Tiles/307B.png': { width: 20, height: 22.5 },
+    'Images/Tiles/308A.png': { width: 20, height: 22.5 },
+    'Images/Tiles/308B.png': { width: 20, height: 22.5 },
+    'Images/Tiles/309A.png': { width: 25, height: 20 },
+    'Images/Tiles/309B.png': { width: 25, height: 20 },
+    'Images/Tiles/310A.png': { width: 25, height: 17.5 },
+    'Images/Tiles/310B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/311A.png': { width: 25, height: 20 },
+    'Images/Tiles/311B.png': { width: 25, height: 20 },
+    'Images/Tiles/312A.png': { width: 25, height: 20 },
+    'Images/Tiles/312B.png': { width: 25, height: 20 },
+    'Images/Tiles/313A.png': { width: 25, height: 15 },
+    'Images/Tiles/313B.png': { width: 25, height: 15 },
+    'Images/Tiles/314A.png': { width: 25, height: 17.5 },
+    'Images/Tiles/314B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/315A.png': { width: 35, height: 15 },
+    'Images/Tiles/315B.png': { width: 35, height: 15 },
+    'Images/Tiles/316A.png': { width: 20, height: 22.5 },
+    'Images/Tiles/316B.png': { width: 20, height: 22.5 },
+    'Images/Tiles/317A.png': { width: 25, height: 25 },
+    'Images/Tiles/317B.png': { width: 25, height: 25 },
+    'Images/Tiles/318A.png': { width: 25, height: 15 },
+    'Images/Tiles/318B.png': { width: 25, height: 15 },
+    'Images/Tiles/319B.png': { width: 25, height: 17.5 },
+    'Images/Tiles/320A.png': { width: 30, height: 25 },
+    'Images/Tiles/320B.png': { width: 30, height: 25 },
+    'Images/Tiles/400A.png': { width: 25, height: 25 },
+    'Images/Tiles/400B.png': { width: 25, height: 25 },
+    'Images/Tiles/401A.png': { width: 25, height: 22.5 },
+    'Images/Tiles/401B.png': { width: 25, height: 22.5 },
+    'Images/Tiles/402A.png': { width: 25, height: 25 },
+    'Images/Tiles/402B.png': { width: 25, height: 25 },
+    'Images/Tiles/403A.png': { width: 35, height: 27.5 },
+    'Images/Tiles/403B.png': { width: 35, height: 27.5 },
+    'Images/Tiles/404A.png': { width: 30, height: 20 },
+    'Images/Tiles/404B.png': { width: 30, height: 20 },
+    'Images/Tiles/500A.png': { width: 30, height: 27.5 },
+    'Images/Tiles/500B.png': { width: 30, height: 27.5 },
     'Images/Tiles/Battlemap(1).png': { width: 40, height: 40 },
     'Images/Tiles/Battlemap(2).png': { width: 40, height: 40 },
+    // 'Images/Tiles/100A.png': { width: 12, height: 8 },
+    // 'Images/Tiles/100B.png': { width: 12, height: 8 },
+    // 'Images/Tiles/101A.png': { width: 12, height: 8 },
+    // 'Images/Tiles/101B.png': { width: 12, height: 8 },
+    // 'Images/Tiles/102A.png': { width: 12, height: 8 },
+    // 'Images/Tiles/102B.png': { width: 12, height: 8 },
+    // 'Images/Tiles/103A.png': { width: 12, height: 8 },
+    // 'Images/Tiles/103B.png': { width: 12, height: 8 },
+    // 'Images/Tiles/104A.png': { width: 12, height: 8 },
+    // 'Images/Tiles/104B.png': { width: 12, height: 8 },
+    // 'Images/Tiles/200A.png': { width: 16, height: 16 },
+    // 'Images/Tiles/200B.png': { width: 16, height: 16 },
+    // 'Images/Tiles/201A.png': { width: 12, height: 14 },
+    // 'Images/Tiles/201B.png': { width: 12, height: 14 },
+    // 'Images/Tiles/202A.png': { width: 12, height: 16 },
+    // 'Images/Tiles/202B.png': { width: 12, height: 16 },
+    // 'Images/Tiles/203A.png': { width: 12, height: 18 },
+    // 'Images/Tiles/203B.png': { width: 12, height: 18 },
+    // 'Images/Tiles/204A.png': { width: 8, height: 18 },
+    // 'Images/Tiles/204B.png': { width: 8, height: 18 },
+    // 'Images/Tiles/205A.png': { width: 16, height: 14 },
+    // 'Images/Tiles/205B.png': { width: 16, height: 14 },
+    // 'Images/Tiles/206A.png': { width: 16, height: 14 },
+    // 'Images/Tiles/206B.png': { width: 16, height: 14 },
+    // 'Images/Tiles/207A.png': { width: 16, height: 10 },
+    // 'Images/Tiles/207B.png': { width: 16, height: 10 },
+    // 'Images/Tiles/208A.png': { width: 20, height: 12 },
+    // 'Images/Tiles/208B.png': { width: 20, height: 12 },
+    // 'Images/Tiles/209A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/209B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/210A.png': { width: 20, height: 12 },
+    // 'Images/Tiles/210B.png': { width: 20, height: 12 },
+    // 'Images/Tiles/211A.png': { width: 20, height: 14 },
+    // 'Images/Tiles/211B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/212A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/212B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/213A.png': { width: 12, height: 14 },
+    // 'Images/Tiles/213B.png': { width: 12, height: 14 },
+    // 'Images/Tiles/214A.png': { width: 20, height: 14 },
+    // 'Images/Tiles/214B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/215A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/215B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/216A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/216B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/217A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/217B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/218A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/218B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/219A.png': { width: 16, height: 10 },
+    // 'Images/Tiles/219B.png': { width: 16, height: 10 },
+    // 'Images/Tiles/220A.png': { width: 12, height: 16 },
+    // 'Images/Tiles/220B.png': { width: 12, height: 16 },
+    // 'Images/Tiles/221A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/221B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/222A.png': { width: 20, height: 10 },
+    // 'Images/Tiles/222B.png': { width: 20, height: 10 },
+    // 'Images/Tiles/223A.png': { width: 20, height: 12 },
+    // 'Images/Tiles/223B.png': { width: 20, height: 12 },
+    // 'Images/Tiles/224A.png': { width: 20, height: 10 },
+    // 'Images/Tiles/224B.png': { width: 20, height: 10 },
+    // 'Images/Tiles/225A.png': { width: 20, height: 14 },
+    // 'Images/Tiles/225B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/226A.png': { width: 16, height: 14 },
+    // 'Images/Tiles/226B.png': { width: 16, height: 14 },
+    // 'Images/Tiles/227A.png': { width: 16, height: 12 },
+    // 'Images/Tiles/227B.png': { width: 16, height: 12 },
+    // 'Images/Tiles/300A.png': { width: 20, height: 14 },
+    // 'Images/Tiles/300B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/301A.png': { width: 20, height: 16 },
+    // 'Images/Tiles/301B.png': { width: 20, height: 16 },
+    // 'Images/Tiles/302A.png': { width: 16, height: 18 },
+    // 'Images/Tiles/302B.png': { width: 16, height: 18 },
+    // 'Images/Tiles/303A.png': { width: 20, height: 16 },
+    // 'Images/Tiles/303B.png': { width: 20, height: 16 },
+    // 'Images/Tiles/304A.png': { width: 16, height: 20 },
+    // 'Images/Tiles/304B.png': { width: 16, height: 20 },
+    // 'Images/Tiles/305A.png': { width: 16, height: 18 },
+    // 'Images/Tiles/305B.png': { width: 16, height: 18 },
+    // 'Images/Tiles/306A.png': { width: 16, height: 16 },
+    // 'Images/Tiles/306B.png': { width: 16, height: 16 },
+    // 'Images/Tiles/307A.png': { width: 16, height: 18 },
+    // 'Images/Tiles/307B.png': { width: 16, height: 18 },
+    // 'Images/Tiles/308A.png': { width: 16, height: 18 },
+    // 'Images/Tiles/308B.png': { width: 16, height: 18 },
+    // 'Images/Tiles/309A.png': { width: 20, height: 16 },
+    // 'Images/Tiles/309B.png': { width: 20, height: 16 },
+    // 'Images/Tiles/310A.png': { width: 20, height: 14 },
+    // 'Images/Tiles/310B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/311A.png': { width: 20, height: 16 },
+    // 'Images/Tiles/311B.png': { width: 20, height: 16 },
+    // 'Images/Tiles/312A.png': { width: 20, height: 16 },
+    // 'Images/Tiles/312B.png': { width: 20, height: 16 },
+    // 'Images/Tiles/313A.png': { width: 20, height: 12 },
+    // 'Images/Tiles/313B.png': { width: 20, height: 12 },
+    // 'Images/Tiles/314A.png': { width: 20, height: 14 },
+    // 'Images/Tiles/314B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/315A.png': { width: 28, height: 12 },
+    // 'Images/Tiles/315B.png': { width: 28, height: 12 },
+    // 'Images/Tiles/316A.png': { width: 16, height: 18 },
+    // 'Images/Tiles/316B.png': { width: 16, height: 18 },
+    // 'Images/Tiles/317A.png': { width: 20, height: 20 },
+    // 'Images/Tiles/317B.png': { width: 20, height: 20 },
+    // 'Images/Tiles/318A.png': { width: 20, height: 12 },
+    // 'Images/Tiles/318B.png': { width: 20, height: 12 },
+    // 'Images/Tiles/319B.png': { width: 20, height: 14 },
+    // 'Images/Tiles/320A.png': { width: 24, height: 20 },
+    // 'Images/Tiles/320B.png': { width: 24, height: 20 },
+    // 'Images/Tiles/400A.png': { width: 20, height: 20 },
+    // 'Images/Tiles/400B.png': { width: 20, height: 20 },
+    // 'Images/Tiles/401A.png': { width: 20, height: 18 },
+    // 'Images/Tiles/401B.png': { width: 20, height: 18 },
+    // 'Images/Tiles/402A.png': { width: 20, height: 20 },
+    // 'Images/Tiles/402B.png': { width: 20, height: 20 },
+    // 'Images/Tiles/403A.png': { width: 28, height: 22 },
+    // 'Images/Tiles/403B.png': { width: 28, height: 22 },
+    // 'Images/Tiles/404A.png': { width: 24, height: 16 },
+    // 'Images/Tiles/404B.png': { width: 24, height: 16 },
+    // 'Images/Tiles/500A.png': { width: 24, height: 22 },
+    // 'Images/Tiles/500B.png': { width: 24, height: 22 },
+    // 'Images/Tiles/Battlemap(1).png': { width: 40, height: 40 },
+    // 'Images/Tiles/Battlemap(2).png': { width: 40, height: 40 },
   };
 
   function createLobby() {
@@ -162,18 +285,19 @@ const Whiteboard = () => {
 
   useEffect(() => {
     if (!sessionId) return;
-    const serverUrl = process.env.REACT_APP_SERVER_URL || window.location.origin;
-    socket.current = io(serverUrl, {
-      query: { sessionId, create: isCreating.toString() },
-    });
-
-    // // Listen for session error
-    // socket.current.on("sessionError", (data) => {
-    //   alert(data.message);
-    //   socket.current.disconnect();
-    //   // Optionally reset state to allow retry
-    //   setSessionId(null);
-    // });
+    // Use production or test host
+    let serverUrl = "";
+    if (production == false) {
+      serverUrl = "http://localhost:5000";
+      socket.current = io(serverUrl, {
+        query: { sessionId, create: isCreating.toString() },
+      });
+    } else {
+      serverUrl = process.env.REACT_APP_SERVER_URL || window.location.origin;
+      socket.current = io(serverUrl, {
+        query: { sessionId, create: isCreating.toString() },
+      });
+    }
 
     const containerEl = document.getElementById("canvasContainer");
     const whiteboardEl = document.getElementById("whiteboard");
@@ -401,9 +525,13 @@ const Whiteboard = () => {
 
   // Add a tile (image)
   const addTile = (tileName) => {
-    // E.g. tileName='100A' => URL='http://localhost:5000/Images/Tiles/100A.png'
-    // const url = `http://localhost:5000/Images/Tiles/${tileName}.png`;
-    const url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
+    let url = "";
+    if (production == false) {
+      url = `http://localhost:5000/Images/Tiles/${tileName}.png`
+    } else {
+      url = `${window.location.origin}/Images/Tiles/${tileName}.png`;
+    }
+    
     const tilePath = `Images/Tiles/${tileName}.png`;
     // Add player
     // const playerPath = `Images/Tokens/${tileName}.png`
@@ -485,8 +613,13 @@ const Whiteboard = () => {
     console.log(`Selected player: ${playerName}`);
 
     // Emit player to backend
-    // const url = `http://localhost:5000/Images/Players/${playerName}.png`;
-    const url = `${window.location.origin}/Images/Players/${playerName}.png`;
+    let url = "";
+    if (production == false) {
+      url = `http://localhost:5000/Images/Players/${playerName}.png`;
+    } else {
+      url = `${window.location.origin}/Images/Players/${playerName}.png`;  
+    }
+    
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -532,8 +665,12 @@ const Whiteboard = () => {
     console.log(`Selected enemy: ${enemyName}`);
 
     // Emit enemy to backend
-    // const url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
-    const url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
+    let url = "";
+    if (production == false) {
+      url = `http://localhost:5000/Images/Enemys/${enemyName}.png`;
+    } else {
+      url = `${window.location.origin}/Images/Enemys/${enemyName}.png`;
+    }
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -577,8 +714,12 @@ const Whiteboard = () => {
     console.log(`Selected banner: ${bannerName}`);
 
     // Emit banner to backend
-    // const url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
-    const url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
+    let url = "";
+    if (production == false) {
+      url = `http://localhost:5000/Images/Banners/${bannerName}.png`;
+    } else {
+      url = `${window.location.origin}/Images/Banners/${bannerName}.png`;
+    }
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -622,8 +763,12 @@ const Whiteboard = () => {
     console.log(`Selected Token: ${tokenName}`);
 
     // Emit token to backend
-    // const url = `http://localhost:5000/Images/Tokens/${tokenName}.png`;
-    const url = `${window.location.origin}/Images/Tokens/${tokenName}.png`;
+    let url = "";
+    if (production == false) {
+      url = `http://localhost:5000/Images/Tokens/${tokenName}.png`;
+    } else {
+      url = `${window.location.origin}/Images/Tokens/${tokenName}.png`;
+    }
 
     const imgEl = new Image();
     imgEl.src = url;
@@ -667,8 +812,12 @@ const Whiteboard = () => {
     console.log(`Selected Environment: ${EnvironmentName}`);
 
     // Emit Environment to backend
-    // const url = `http://localhost:5000/Images/Environments/${EnvironmentName}.png`;
-    const url = `${window.location.origin}/Images/Environments/${EnvironmentName}.png`;
+    let url = "";
+    if (production == false) {
+      url = `http://localhost:5000/Images/Environments/${EnvironmentName}.png`;
+    } else {
+      url = `${window.location.origin}/Images/Environments/${EnvironmentName}.png`;
+    }
 
     const imgEl = new Image();
     imgEl.src = url;
